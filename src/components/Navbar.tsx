@@ -3,7 +3,14 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { Ship, Anchor, LogIn, LogOut, LayoutDashboard, Navigation } from "lucide-react";
+import {
+  Ship,
+  Anchor,
+  LogIn,
+  LogOut,
+  LayoutDashboard,
+  Navigation,
+} from "lucide-react";
 import { getSessionUser, clearSessionUser } from "@/lib/session";
 import { User } from "@/types";
 
@@ -34,29 +41,16 @@ export default function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-[#0A2E4D] text-white shadow-md border-b border-slate-800">
+    <header className="sticky top-0 z-50 bg-white text-white shadow-md border-b border-slate-800">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
-          {/* Brand Logo */}
-          <Link href="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-sky-500 to-blue-600 flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
-              <Ship className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-extrabold text-lg sm:text-xl tracking-tight text-white">
-                  PARENGGE KITA
-                </span>
-                <span className="text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-white/10 text-sky-200 border border-white/10">
-                  MVP
-                </span>
-              </div>
-              <p className="hidden sm:block text-[11px] text-slate-300 font-normal">
-                Digitalisasi Rantai Pasok Nelayan Galesong
-              </p>
-            </div>
+          <Link href="/" className="flex items-center gap-3">
+            <img
+              src="/assets/logo.png"
+              alt="Logo Parengge Kita"
+              className="w-[200px] h-[200px]"
+            />
           </Link>
-
           {/* Desktop Navigation Links */}
           <nav className="hidden md:flex items-center gap-6">
             <Link
@@ -96,8 +90,8 @@ export default function Navbar() {
                     {user.role === "admin"
                       ? "Dashboard Admin"
                       : user.role === "kapal_pengangkut"
-                      ? "Dashboard Pengangkut"
-                      : "Dashboard Nelayan"}
+                        ? "Dashboard Pengangkut"
+                        : "Dashboard Nelayan"}
                   </span>
                   <span className="sm:hidden">Dashboard</span>
                 </Link>

@@ -22,7 +22,7 @@ export default function LiveTrackingMap({
 
   // Filter active trips with valid coordinates
   const activeTrips = trips.filter(
-    (t) => t.is_tracking_active && t.latitude != null && t.longitude != null
+    (t) => t.is_tracking_active && t.latitude != null && t.longitude != null,
   );
 
   useEffect(() => {
@@ -89,7 +89,9 @@ export default function LiveTrackingMap({
       popupAnchor: [0, -18],
     });
 
-    const tpiMarker = L.marker([-5.3216, 119.3625], { icon: tpiIcon }).addTo(map);
+    const tpiMarker = L.marker([-5.3216, 119.3625], { icon: tpiIcon }).addTo(
+      map,
+    );
     tpiMarker.bindPopup(`
       <div style="font-family: system-ui; min-width: 180px;">
         <div style="background-color: #059669; color: #ffffff; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; text-transform: uppercase;">
@@ -152,16 +154,14 @@ export default function LiveTrackingMap({
   }, [activeTrips.length, mapLoaded]);
 
   return (
-    <div id="peta-tracking" className="bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden">
+    <div
+      id="peta-tracking"
+      className="relative z-10 isolate bg-white rounded-2xl shadow-lg border border-slate-200 overflow-hidden"
+    >
       {/* Header Bar */}
       <div className="bg-[#0A2E4D] text-white px-4 py-3 sm:px-6 flex flex-wrap items-center justify-between gap-3 border-b border-slate-800">
         <div className="flex items-center gap-2.5">
-          <span className="relative flex h-3 w-3">
-            <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-            <span className="relative inline-flex rounded-full h-3 w-3 bg-emerald-500"></span>
-          </span>
           <h3 className="font-extrabold text-sm sm:text-base tracking-wide text-white uppercase flex items-center gap-2">
-            <Navigation className="w-4 h-4 text-sky-400" />
             Live Tracking Kapal Pengangkut Hari Ini
           </h3>
         </div>
@@ -177,7 +177,9 @@ export default function LiveTrackingMap({
               title="Perbarui Posisi GPS"
               className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-white transition-colors disabled:opacity-50"
             >
-              <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? "animate-spin" : ""}`} />
+              <RefreshCw
+                className={`w-3.5 h-3.5 ${isLoading ? "animate-spin" : ""}`}
+              />
             </button>
           )}
         </div>
@@ -188,7 +190,7 @@ export default function LiveTrackingMap({
         <div ref={mapContainerRef} className="w-full h-full" />
 
         {/* Legend / Info Helper */}
-        <div className="absolute bottom-3 left-3 z-[400] bg-white/95 backdrop-blur-sm border border-slate-200 rounded-xl p-2.5 shadow-md text-xs space-y-1.5 max-w-[200px] sm:max-w-none">
+        <div className="absolute bottom-3 left-3 z-20 bg-white/95 backdrop-blur-sm border border-slate-200 rounded-xl p-2.5 shadow-md text-xs space-y-1.5 max-w-[200px] sm:max-w-none">
           <div className="flex items-center gap-2 text-slate-800 font-medium">
             <span className="text-base">🚢</span>
             <span>Kapal Pengangkut OTW</span>

@@ -25,7 +25,9 @@ const LiveTrackingMap = dynamic(() => import("@/components/LiveTrackingMap"), {
 export default function HomePage() {
   const [trips, setTrips] = useState<Trip[]>(MOCK_TRIPS);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
-  const [selectedLokasi, setSelectedLokasi] = useState<"Semua" | LokasiMuat>("Semua");
+  const [selectedLokasi, setSelectedLokasi] = useState<"Semua" | LokasiMuat>(
+    "Semua",
+  );
   const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
@@ -35,11 +37,13 @@ export default function HomePage() {
     try {
       const { data, error } = await supabase
         .from("trips")
-        .select(`
+        .select(
+          `
           *,
           pengangkut:users!trips_pengangkut_id_fkey(*),
           manifests:trip_manifests(*)
-        `)
+        `,
+        )
         .order("tanggal_berangkat", { ascending: false });
 
       if (!error && data && data.length > 0) {
@@ -76,7 +80,7 @@ export default function HomePage() {
           trip.pengangkut?.nama_juragan?.toLowerCase().includes(query);
 
         const matchFisherman = trip.manifests?.some((m) =>
-          m.nama_kapal_nelayan.toLowerCase().includes(query)
+          m.nama_kapal_nelayan.toLowerCase().includes(query),
         );
 
         return matchTransporter || matchFisherman;
@@ -109,7 +113,11 @@ export default function HomePage() {
           </h1>
 
           <p className="text-sm sm:text-base text-slate-200 leading-relaxed max-w-2xl">
-            Menghubungkan nelayan penangkap ikan di perairan <strong>Puma & Kalmas</strong> dengan kapal pengangkut menuju <strong>TPI Galesong Utara</strong>, dilengkapi pelacakan lokasi kapal real-time serta pemesanan kebutuhan pokok es balok dari darat ke laut.
+            Menghubungkan nelayan penangkap ikan di perairan{" "}
+            <strong>Puma & Kalmas</strong> dengan kapal pengangkut menuju{" "}
+            <strong>TPI Galesong Utara</strong>, dilengkapi pelacakan lokasi
+            kapal real-time serta pemesanan kebutuhan pokok es balok dari darat
+            ke laut.
           </p>
 
           {/* Quick Metrics Bar */}
@@ -130,20 +138,11 @@ export default function HomePage() {
               <span className="text-[11px] font-bold text-sky-200 uppercase block">
                 Kapal OTW ke TPI
               </span>
-              <span className="text-xl sm:text-2xl font-black font-mono-numbers text-emerald-400">
+              <span className="text-xl sm:text-2xl font-black font-mono-numbers text-white">
                 {totalKapalAktif}{" "}
-                <span className="text-xs font-bold text-slate-300 font-sans">
+                <span className="text-xs font-bold text-emerald-400 font-sans">
                   KAPAL
                 </span>
-              </span>
-            </div>
-
-            <div className="col-span-2 sm:col-span-1 bg-white/10 backdrop-blur-sm rounded-2xl p-3 border border-white/10 flex flex-col justify-center">
-              <span className="text-[11px] font-bold text-sky-200 uppercase block">
-                Target Pendaratan
-              </span>
-              <span className="text-sm sm:text-base font-extrabold text-amber-300">
-                TPI Galesong Utara
               </span>
             </div>
           </div>
@@ -172,7 +171,8 @@ export default function HomePage() {
               </h2>
             </div>
             <p className="text-xs sm:text-sm text-slate-600 mt-1">
-              Daftar muatan ikan kapal pengangkut dari wilayah Puma & Kalmas (standar laporan grup nelayan).
+              Daftar muatan ikan kapal pengangkut dari wilayah Puma & Kalmas
+              (standar laporan grup nelayan).
             </p>
           </div>
 
@@ -222,7 +222,8 @@ export default function HomePage() {
               Tidak ada data muatan gabus yang cocok
             </h4>
             <p className="text-xs text-slate-500 max-w-md mx-auto">
-              Tidak ditemukan laporan kapal dengan filter lokasi atau kata kunci pencarian yang dipilih. Coba reset filter pencarian Anda.
+              Tidak ditemukan laporan kapal dengan filter lokasi atau kata kunci
+              pencarian yang dipilih. Coba reset filter pencarian Anda.
             </p>
           </div>
         ) : (
