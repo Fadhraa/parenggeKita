@@ -9,6 +9,10 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
+        primary: {
+          DEFAULT: "#0c2340",
+          hover: "#0c2340",
+        },
         maritime: {
           navy: "#0A2E4D",
           dark: "#061A2B",

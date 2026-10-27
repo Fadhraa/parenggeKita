@@ -46,10 +46,14 @@ export default function Navbar() {
         <div className="flex items-center justify-between h-16">
           <Link href="/" className="flex items-center gap-3">
             <img
-              src="/assets/logo.png"
+              src="/assets/LOGO_KAPAL.png"
               alt="Logo Parengge Kita"
-              className="w-[200px] h-[200px]"
+              className="w-12 h-12"
             />
+            <div className="flex gap-1 tracking-wider ">
+              <h1 className="font-bold text-primary">PARENGGE</h1>
+              <span className="font-bold text-[#94a3b8]">KITA</span>
+            </div>
           </Link>
           {/* Desktop Navigation Links */}
           <nav className="hidden md:flex items-center gap-6">
