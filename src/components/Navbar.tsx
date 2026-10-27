@@ -4,9 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
-  Ship,
   Anchor,
-  LogIn,
   LogOut,
   LayoutDashboard,
   Navigation,
@@ -33,6 +31,27 @@ export default function Navbar() {
     router.push("/");
   };
 
+  // Handler untuk secret login via logo (double click / long press di mobile)
+  const timerRef = React.useRef<NodeJS.Timeout | null>(null);
+
+  const handleLogoDoubleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    router.push("/login");
+  };
+
+  const handleTouchStart = () => {
+    timerRef.current = setTimeout(() => {
+      router.push("/login");
+    }, 700);
+  };
+
+  const handleTouchEnd = () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+  };
+
   const getDashboardHref = () => {
     if (!user) return "/login";
     if (user.role === "admin") return "/dashboard/admin";
@@ -41,94 +60,94 @@ export default function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-white text-white shadow-md border-b border-slate-800">
+    <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md text-slate-800 border-b border-slate-200/80 shadow-[0_1px_3px_0_rgba(0,0,0,0.03)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
-          <Link href="/" className="flex items-center gap-3">
-            <img
-              src="/assets/LOGO_KAPAL.png"
-              alt="Logo Parengge Kita"
-              className="w-12 h-12"
-            />
-            <div className="flex gap-1 tracking-wider ">
-              <h1 className="font-bold text-primary">PARENGGE</h1>
-              <span className="font-bold text-[#94a3b8]">KITA</span>
-            </div>
-          </Link>
+        <div className="relative flex items-center justify-center md:justify-between h-16">
+          {/* Logo Brand dengan Akses Login Rahasia (Tepat di tengah pada mobile, di kiri pada desktop) */}
+          <div
+            onDoubleClick={handleLogoDoubleClick}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+            onTouchCancel={handleTouchEnd}
+            className="select-none flex items-center justify-center"
+          >
+            <Link href="/" className="flex items-center gap-3 group">
+              <img
+                src="/assets/LOGO_KAPAL.png"
+                alt="Logo Parengge Kita"
+                className="w-11 h-11 object-contain transition-transform group-hover:scale-105"
+              />
+              <div className="flex items-center gap-1 tracking-wider text-base sm:text-lg">
+                <h1 className="font-extrabold text-primary">PARENGGE</h1>
+                <span className="font-bold text-slate-400">KITA</span>
+              </div>
+            </Link>
+          </div>
+
           {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-6">
+          <nav className="hidden md:flex items-center gap-1 lg:gap-2">
             <Link
               href="/"
-              className={`text-sm font-medium transition-colors hover:text-white ${
-                pathname === "/" ? "text-sky-400 font-bold" : "text-slate-200"
+              className={`text-sm font-medium px-3.5 py-1.5 rounded-lg transition-colors ${
+                pathname === "/"
+                  ? "text-primary font-bold bg-slate-100/80"
+                  : "text-slate-600 hover:text-primary hover:bg-slate-50"
               }`}
             >
               Beranda
             </Link>
             <Link
               href="/#peta-tracking"
-              className="text-sm font-medium text-slate-200 hover:text-white transition-colors flex items-center gap-1.5"
+              className="group text-sm font-medium text-slate-600 hover:text-primary hover:bg-slate-50 px-3.5 py-1.5 rounded-lg transition-colors flex items-center gap-1.5"
             >
-              <Navigation className="w-4 h-4 text-sky-400" />
-              Peta Live Tracking
+              <Navigation className="w-4 h-4 text-sky-500 group-hover:text-primary transition-colors" />
+              <span>Peta Live Tracking</span>
             </Link>
             <Link
               href="/#rekap-muatan"
-              className="text-sm font-medium text-slate-200 hover:text-white transition-colors flex items-center gap-1.5"
+              className="group text-sm font-medium text-slate-600 hover:text-primary hover:bg-slate-50 px-3.5 py-1.5 rounded-lg transition-colors flex items-center gap-1.5"
             >
-              <Anchor className="w-4 h-4 text-amber-400" />
-              Rekap Muatan Gabus
+              <Anchor className="w-4 h-4 text-amber-500 group-hover:text-amber-600 transition-colors" />
+              <span>Rekap Muatan Gabus</span>
             </Link>
           </nav>
 
-          {/* User Auth / Dashboard Button */}
-          <div className="flex items-center gap-3">
-            {user ? (
-              <div className="flex items-center gap-2 sm:gap-3">
-                <Link
-                  href={getDashboardHref()}
-                  className="flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 rounded-lg bg-sky-500 hover:bg-sky-600 text-white font-semibold text-xs sm:text-sm shadow transition-all hover:shadow-sky-500/20"
-                >
-                  <LayoutDashboard className="w-4 h-4" />
-                  <span className="hidden sm:inline">
-                    {user.role === "admin"
-                      ? "Dashboard Admin"
-                      : user.role === "kapal_pengangkut"
-                        ? "Dashboard Pengangkut"
-                        : "Dashboard Nelayan"}
-                  </span>
-                  <span className="sm:hidden">Dashboard</span>
-                </Link>
+          {/* User Auth: Hanya tampil jika sudah login (Dashboard & Logout) */}
+          {user ? (
+            <div className="absolute right-0 md:static flex items-center gap-2 sm:gap-3">
+              <Link
+                href={getDashboardHref()}
+                className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-primary hover:bg-[#07182b] text-white font-medium text-xs sm:text-sm shadow-sm hover:shadow transition-all"
+              >
+                <LayoutDashboard className="w-4 h-4 text-sky-400" />
+                <span className="hidden sm:inline">
+                  {user.role === "admin"
+                    ? "Dashboard Admin"
+                    : user.role === "kapal_pengangkut"
+                      ? "Dashboard Pengangkut"
+                      : "Dashboard Nelayan"}
+                </span>
+                <span className="sm:hidden">Dashboard</span>
+              </Link>
 
-                <div className="hidden lg:flex flex-col text-right">
-                  <span className="text-xs font-bold text-sky-200 truncate max-w-[120px]">
-                    {user.nama_kapal}
-                  </span>
-                  <span className="text-[10px] text-slate-300">
-                    {user.nama_juragan || user.username}
-                  </span>
-                </div>
+              <div className="hidden lg:flex flex-col text-right">
+                <span className="text-xs font-bold text-slate-800 truncate max-w-[130px]">
+                  {user.nama_kapal}
+                </span>
+                <span className="text-[10px] text-slate-500">
+                  {user.nama_juragan || user.username}
+                </span>
+              </div>
 
-                <button
-                  onClick={handleLogout}
-                  title="Keluar Akun"
-                  className="p-2 rounded-lg hover:bg-slate-800 text-slate-300 hover:text-rose-400 transition-colors"
-                >
-                  <LogOut className="w-4 h-4" />
-                </button>
-              </div>
-            ) : (
-              <div className="flex items-center gap-2">
-                <Link
-                  href="/login"
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-sky-500 hover:bg-sky-600 text-white font-semibold text-xs sm:text-sm shadow-md hover:shadow-sky-500/25 transition-all"
-                >
-                  <LogIn className="w-4 h-4" />
-                  <span>Masuk / Daftar</span>
-                </Link>
-              </div>
-            )}
-          </div>
+              <button
+                onClick={handleLogout}
+                title="Keluar Akun"
+                className="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+              >
+                <LogOut className="w-4 h-4" />
+              </button>
+            </div>
+          ) : null}
         </div>
       </div>
     </header>

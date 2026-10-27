@@ -31,7 +31,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="id" className={`${plusJakartaSans.variable} ${jetbrainsMono.variable}`}>
-      <body className="bg-slate-50 text-slate-900 flex flex-col min-h-screen pb-16 md:pb-0">
+      <body className="bg-slate-50 text-slate-900 flex flex-col min-h-screen">
         <Navbar />
         <main className="flex-1">{children}</main>
         <BottomNav />

@@ -101,49 +101,76 @@ export default function HomePage() {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-8 sm:space-y-12">
       {/* Hero Section */}
-      <section className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#0A2E4D] via-[#0E3B63] to-[#0A2E4D] text-white p-6 sm:p-10 shadow-2xl border border-sky-800/40">
-        <div className="relative z-10 max-w-3xl space-y-4">
-          <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-sky-500/20 text-sky-300 border border-sky-400/30 text-xs font-bold tracking-wide uppercase">
-            <Sparkles className="w-3.5 h-3.5" />
-            BPC COOPFEST 2026 • Inovasi Maritim
+      <section className="relative overflow-hidden rounded-3xl bg-white border border-slate-200/80 p-6 sm:p-10 lg:p-12 shadow-[0_4px_25px_-5px_rgba(15,23,42,0.04),0_1px_3px_0_rgba(15,23,42,0.02)]">
+        {/* Soft Decorative Ambient Blue Glows */}
+        <div className="absolute -top-24 -right-24 w-96 h-96 bg-gradient-to-br from-sky-100/60 via-blue-50/30 to-transparent rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-gradient-to-tr from-sky-50/50 to-transparent rounded-full blur-2xl pointer-events-none" />
+
+        <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-6 sm:gap-8 lg:gap-12">
+          {/* Left Column: Heading, Description & Metrics (Mobile: Below ship, Desktop: Left) */}
+          <div className="order-2 lg:order-1 flex-1 space-y-4 sm:space-y-5 max-w-2xl text-center lg:text-left">
+            <h1 className="text-xl sm:text-4xl lg:text-[44px] font-black tracking-tight leading-[1.18] text-slate-900">
+              Transparansi Rantai Pasok{" "}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-sky-700 to-sky-600">
+                Hasil Tangkapan
+              </span>{" "}
+              & Logistik Nelayan
+            </h1>
+
+            <p className="text-xs sm:text-base text-slate-600 leading-relaxed max-w-xl">
+              Menghubungkan nelayan penangkap ikan di perairan{" "}
+              <strong className="text-slate-900 font-semibold">
+                Puma & Kalmas
+              </strong>{" "}
+              dengan kapal pengangkut menuju{" "}
+              <strong className="text-slate-900 font-semibold">
+                TPI Galesong Utara
+              </strong>
+              , dilengkapi pelacakan lokasi kapal real-time serta pemesanan
+              kebutuhan pokok es balok dari darat ke laut.
+            </p>
+
+            {/* Quick Metrics Bar */}
+            <div className="grid grid-cols-2 gap-3.5 pt-2 max-w-md">
+              <div className="bg-slate-50/90 hover:bg-white rounded-2xl p-4 border border-slate-200/80 hover:border-sky-300 shadow-sm transition-all group flex flex-col items-center justify-between text-center">
+                <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider min-h-[32px] flex items-center justify-center text-center mb-1">
+                  Total Muatan Masuk
+                </span>
+                <div className="flex items-baseline justify-center gap-1.5 mt-auto">
+                  <span className="text-2xl sm:text-3xl font-black font-mono-numbers text-slate-900">
+                    {totalGabusHariIni}
+                  </span>
+                  <span className="text-xs font-bold text-sky-600 font-sans tracking-wide">
+                    GABUS
+                  </span>
+                </div>
+              </div>
+
+              <div className="bg-slate-50/90 hover:bg-white rounded-2xl p-4 border border-slate-200/80 hover:border-sky-300 shadow-sm transition-all group flex flex-col items-center justify-between text-center">
+                <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider min-h-[32px] flex items-center justify-center text-center mb-1">
+                  Total Kapal OTW ke TPI
+                </span>
+                <div className="flex items-baseline justify-center gap-1.5 mt-auto">
+                  <span className="text-2xl sm:text-3xl font-black font-mono-numbers text-slate-900">
+                    {totalKapalAktif}
+                  </span>
+                  <span className="text-xs font-bold text-emerald-600 font-sans tracking-wide">
+                    KAPAL
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
 
-          <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight">
-            Transparansi Rantai Pasok Hasil Tangkapan & Logistik Nelayan
-          </h1>
-
-          <p className="text-sm sm:text-base text-slate-200 leading-relaxed max-w-2xl">
-            Menghubungkan nelayan penangkap ikan di perairan{" "}
-            <strong>Puma & Kalmas</strong> dengan kapal pengangkut menuju{" "}
-            <strong>TPI Galesong Utara</strong>, dilengkapi pelacakan lokasi
-            kapal real-time serta pemesanan kebutuhan pokok es balok dari darat
-            ke laut.
-          </p>
-
-          {/* Quick Metrics Bar */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-4 max-w-xl">
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-3 border border-white/10">
-              <span className="text-[11px] font-bold text-sky-200 uppercase block">
-                Total Muatan Masuk
-              </span>
-              <span className="text-xl sm:text-2xl font-black font-mono-numbers text-white">
-                {totalGabusHariIni}{" "}
-                <span className="text-xs font-bold text-sky-300 font-sans">
-                  GABUS
-                </span>
-              </span>
-            </div>
-
-            <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-3 border border-white/10">
-              <span className="text-[11px] font-bold text-sky-200 uppercase block">
-                Kapal OTW ke TPI
-              </span>
-              <span className="text-xl sm:text-2xl font-black font-mono-numbers text-white">
-                {totalKapalAktif}{" "}
-                <span className="text-xs font-bold text-emerald-400 font-sans">
-                  KAPAL
-                </span>
-              </span>
+          {/* Right Column: Ship Illustration (Mobile: On top, Desktop: Right) */}
+          <div className="order-1 lg:order-2 relative flex-shrink-0 flex items-center justify-center w-full lg:w-auto">
+            <div className="absolute w-44 h-44 sm:w-64 sm:h-64 rounded-full bg-gradient-to-tr from-sky-100/70 to-blue-50/40 blur-2xl -z-10" />
+            <div className="relative group">
+              <img
+                src="/assets/Kapal/Kapal_3.png"
+                alt="Ilustrasi Kapal Nelayan Parengge"
+                className="w-44 h-44 sm:w-60 sm:h-60 lg:w-96 lg:h-96 object-contain drop-shadow-md transition-transform duration-300 group-hover:scale-105"
+              />
             </div>
           </div>
         </div>
