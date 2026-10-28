@@ -86,7 +86,11 @@ export default function LoginPage() {
       <div className="w-full max-w-md bg-white rounded-3xl shadow-xl border border-slate-200 p-6 sm:p-8 space-y-6">
         {/* Header */}
         <div className="text-center space-y-2">
-          <img src="assets/LOGO_KAPAL.png" alt="" className="w-16 h-16" />
+          <img
+            src="/assets/LOGO_KAPAL.png"
+            alt="Logo Parengge Kita"
+            className="w-16 h-16 mx-auto object-contain"
+          />
           <h2 className="text-2xl font-black text-slate-900 tracking-tight">
             Masuk ke Parengge Kita
           </h2>
