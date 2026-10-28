@@ -283,6 +283,7 @@ export default function PengangkutDashboard() {
                   key={trip.id}
                   trip={trip}
                   currentUser={currentUser}
+                  showCopyButton={true}
                   onEdit={(t) => {
                     setEditingTrip(t);
                     setIsModalOpen(true);

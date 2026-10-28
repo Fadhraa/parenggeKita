@@ -7,7 +7,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { MOCK_TRIPS } from "@/lib/mockData";
 import { getSessionUser } from "@/lib/session";
 import ManifestCard from "@/components/ManifestCard";
-import { Search, Package, Navigation, Sparkles, Anchor } from "lucide-react";
+import { Package, Navigation, Sparkles, Anchor } from "lucide-react";
 
 // Dynamically import LiveTrackingMap to avoid SSR issues with Leaflet
 const LiveTrackingMap = dynamic(() => import("@/components/LiveTrackingMap"), {
@@ -28,7 +28,6 @@ export default function HomePage() {
   const [selectedLokasi, setSelectedLokasi] = useState<"Semua" | LokasiMuat>(
     "Semua",
   );
-  const [searchQuery, setSearchQuery] = useState("");
   const [isLoading, setIsLoading] = useState(true);
 
   // Fetch trips from Supabase (with fallback)
@@ -67,27 +66,15 @@ export default function HomePage() {
     return () => clearInterval(interval);
   }, []);
 
-  // Filter trips based on Location and Search Query
+  // Filter trips based on Location
   const filteredTrips = useMemo(() => {
     return trips.filter((trip) => {
       if (selectedLokasi !== "Semua" && trip.lokasi !== selectedLokasi) {
         return false;
       }
-      if (searchQuery.trim()) {
-        const query = searchQuery.toLowerCase();
-        const matchTransporter =
-          trip.pengangkut?.nama_kapal?.toLowerCase().includes(query) ||
-          trip.pengangkut?.nama_juragan?.toLowerCase().includes(query);
-
-        const matchFisherman = trip.manifests?.some((m) =>
-          m.nama_kapal_nelayan.toLowerCase().includes(query),
-        );
-
-        return matchTransporter || matchFisherman;
-      }
       return true;
     });
-  }, [trips, selectedLokasi, searchQuery]);
+  }, [trips, selectedLokasi]);
 
   // Statistics calculation
   const totalGabusHariIni = useMemo(() => {
@@ -221,26 +208,6 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Search Input Bar */}
-        <div className="relative">
-          <Search className="absolute left-4 top-3.5 w-5 h-5 text-slate-400" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Cari nama kapal nelayan atau juragan (contoh: Tinggi Moncong, Ridho DPR, Tabbing DTB)..."
-            className="w-full pl-12 pr-4 py-3 sm:py-3.5 rounded-2xl bg-white border border-slate-200 text-sm font-medium text-slate-900 placeholder-slate-400 shadow-sm focus:outline-none focus:ring-2 focus:ring-sky-500 focus:border-sky-500"
-          />
-          {searchQuery && (
-            <button
-              onClick={() => setSearchQuery("")}
-              className="absolute right-4 top-3.5 text-xs font-bold text-slate-400 hover:text-slate-600"
-            >
-              Reset
-            </button>
-          )}
-        </div>
-
         {/* Manifest Cards Grid */}
         {filteredTrips.length === 0 ? (
           <div className="bg-white rounded-2xl p-12 text-center border border-slate-200 space-y-3">
@@ -249,8 +216,7 @@ export default function HomePage() {
               Tidak ada data muatan gabus yang cocok
             </h4>
             <p className="text-xs text-slate-500 max-w-md mx-auto">
-              Tidak ditemukan laporan kapal dengan filter lokasi atau kata kunci
-              pencarian yang dipilih. Coba reset filter pencarian Anda.
+              Tidak ditemukan laporan kapal untuk filter area yang dipilih.
             </p>
           </div>
         ) : (

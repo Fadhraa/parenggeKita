@@ -18,7 +18,8 @@ export default function NelayanDashboard() {
     { trip: Trip; jumlahGabus: number }[]
   >([]);
   const [isRequestModalOpen, setIsRequestModalOpen] = useState(false);
-  const [selectedChatRequest, setSelectedChatRequest] = useState<LogisticRequest | null>(null);
+  const [selectedChatRequest, setSelectedChatRequest] =
+    useState<LogisticRequest | null>(null);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -27,21 +28,26 @@ export default function NelayanDashboard() {
     try {
       const { data: tripsData } = await supabase
         .from("trips")
-        .select(`
+        .select(
+          `
           *,
           pengangkut:users!trips_pengangkut_id_fkey(*),
           manifests:trip_manifests(*)
-        `)
+        `,
+        )
         .order("tanggal_berangkat", { ascending: false });
 
-      const allTrips: Trip[] = tripsData && tripsData.length > 0 ? (tripsData as Trip[]) : MOCK_TRIPS;
+      const allTrips: Trip[] =
+        tripsData && tripsData.length > 0 ? (tripsData as Trip[]) : MOCK_TRIPS;
 
       const carried: { trip: Trip; jumlahGabus: number }[] = [];
       allTrips.forEach((t) => {
         const found = t.manifests?.find(
           (m) =>
             m.nelayan_id === user.id ||
-            m.nama_kapal_nelayan.toLowerCase().includes(user.nama_kapal.toLowerCase())
+            m.nama_kapal_nelayan
+              .toLowerCase()
+              .includes(user.nama_kapal.toLowerCase()),
         );
         if (found) {
           carried.push({ trip: t, jumlahGabus: found.jumlah_gabus });
@@ -51,7 +57,8 @@ export default function NelayanDashboard() {
 
       const { data: logData, error: logErr } = await supabase
         .from("logistic_requests")
-        .select(`
+        .select(
+          `
           *,
           nelayan:users!logistic_requests_nelayan_id_fkey(*),
           pengangkut:users!logistic_requests_pengangkut_id_fkey(*),
@@ -59,14 +66,20 @@ export default function NelayanDashboard() {
             *,
             sender:users!logistic_messages_sender_id_fkey(*)
           )
-        `)
+        `,
+        )
         .eq("nelayan_id", user.id)
         .order("created_at", { ascending: false });
 
       if (!logErr && logData && logData.length > 0) {
         setMyRequests(logData as LogisticRequest[]);
       } else {
-        setMyRequests(MOCK_LOGISTICS.filter((r) => r.nelayan_id === user.id || r.nelayan_id === "usr-nelayan-01"));
+        setMyRequests(
+          MOCK_LOGISTICS.filter(
+            (r) =>
+              r.nelayan_id === user.id || r.nelayan_id === "usr-nelayan-01",
+          ),
+        );
       }
     } catch (e) {
       console.warn("Using fallback mock data for nelayan", e);
@@ -139,12 +152,14 @@ export default function NelayanDashboard() {
         prev.map((r) =>
           r.id === requestId
             ? { ...r, messages: [...(r.messages || []), newMsg as any] }
-            : r
-        )
+            : r,
+        ),
       );
       if (selectedChatRequest && selectedChatRequest.id === requestId) {
         setSelectedChatRequest((prev) =>
-          prev ? { ...prev, messages: [...(prev.messages || []), newMsg as any] } : null
+          prev
+            ? { ...prev, messages: [...(prev.messages || []), newMsg as any] }
+            : null,
         );
       }
     }
@@ -160,9 +175,6 @@ export default function NelayanDashboard() {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-sky-50 text-sky-700 uppercase">
-                Kapal Nelayan
-              </span>
               <span className="text-xs text-slate-500">
                 Pangkalan: Area {currentUser.lokasi_default || "Puma"}
               </span>
@@ -171,7 +183,7 @@ export default function NelayanDashboard() {
               {currentUser.nama_kapal}
             </h1>
             <p className="text-xs sm:text-sm text-slate-600 font-medium">
-              👨‍✈️ Kapten: {currentUser.nama_juragan || "Kapten Nelayan"} • WA:{" "}
+              Kapten: {currentUser.nama_juragan || "Kapten Nelayan"} • WA:{" "}
               {currentUser.no_whatsapp}
             </p>
           </div>
@@ -182,7 +194,7 @@ export default function NelayanDashboard() {
           className="w-full md:w-auto px-5 py-3 rounded-2xl bg-sky-500 hover:bg-sky-600 text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-lg shadow-sky-500/25 transition-all"
         >
           <Plus className="w-5 h-5" />
-          <span>Pesan Es Balok / Kebutuhan Pokok</span>
+          <span>Pesan Kebutuhan Pokok</span>
         </button>
       </div>
 
@@ -206,11 +218,12 @@ export default function NelayanDashboard() {
                     Ikan Anda Sedang OTW ke TPI
                   </span>
                   <h4 className="text-base font-extrabold text-emerald-950">
-                    Muatan: {jumlahGabus} Gabus di Kapal {trip.pengangkut?.nama_kapal}
+                    Muatan: {jumlahGabus} Gabus di Kapal{" "}
+                    {trip.pengangkut?.nama_kapal}
                   </h4>
                   <p className="text-xs text-emerald-800">
-                    👨‍✈️ Juragan: {trip.pengangkut?.nama_juragan} • Jam OTW: {trip.jam_otw}{" "}
-                    {trip.zona_waktu}
+                    👨‍✈️ Juragan: {trip.pengangkut?.nama_juragan} • Jam OTW:{" "}
+                    {trip.jam_otw} {trip.zona_waktu}
                   </p>
                 </div>
               </div>
@@ -237,7 +250,8 @@ export default function NelayanDashboard() {
               Belum ada pesanan logistik aktif
             </h4>
             <p className="text-xs text-slate-500 max-w-sm mx-auto">
-              Klik tombol "Pesan Es Balok / Kebutuhan Pokok" untuk menitipkan perbekalan ke kapal pengangkut yang menuju perairan Anda.
+              Klik tombol "Pesan Es Balok / Kebutuhan Pokok" untuk menitipkan
+              perbekalan ke kapal pengangkut yang menuju perairan Anda.
             </p>
           </div>
         ) : (
@@ -253,7 +267,10 @@ export default function NelayanDashboard() {
                       📍 Tujuan: Area {req.lokasi_tujuan}
                     </span>
                     <h4 className="text-sm font-semibold text-slate-500 mt-0.5">
-                      Dibuat pada {new Date(req.created_at || Date.now()).toLocaleDateString("id-ID")}
+                      Dibuat pada{" "}
+                      {new Date(
+                        req.created_at || Date.now(),
+                      ).toLocaleDateString("id-ID")}
                     </h4>
                   </div>
 
@@ -262,15 +279,15 @@ export default function NelayanDashboard() {
                       req.status === "MENUNGGU_ADMIN"
                         ? "bg-amber-50 text-amber-700 border border-amber-200"
                         : req.status === "DITUGASKAN_KE_PENGANGKUT"
-                        ? "bg-sky-50 text-sky-700 border border-sky-200"
-                        : "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                          ? "bg-sky-50 text-sky-700 border border-sky-200"
+                          : "bg-emerald-50 text-emerald-700 border border-emerald-200"
                     }`}
                   >
                     {req.status === "MENUNGGU_ADMIN"
                       ? "⏳ Menunggu Admin"
                       : req.status === "DITUGASKAN_KE_PENGANGKUT"
-                      ? "🚢 Dibawa Pengangkut"
-                      : "✅ Selesai Diterima"}
+                        ? "🚢 Dibawa Pengangkut"
+                        : "✅ Selesai Diterima"}
                   </span>
                 </div>
 
@@ -278,7 +295,9 @@ export default function NelayanDashboard() {
                   <span className="font-bold text-slate-700 block mb-1">
                     📦 Rincian Barang:
                   </span>
-                  <p className="text-slate-800 font-semibold">{req.rincian_barang}</p>
+                  <p className="text-slate-800 font-semibold">
+                    {req.rincian_barang}
+                  </p>
                 </div>
 
                 <div className="pt-2 border-t border-slate-100 flex items-center justify-between text-xs">

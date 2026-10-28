@@ -3,13 +3,23 @@
 import React, { useState } from "react";
 import { Trip, User } from "@/types";
 import { formatDateIndo, generateWhatsAppManifestText } from "@/lib/utils";
-import { Clock, Copy, Check, ChevronDown, ChevronUp, Edit3, Trash2, Package } from "lucide-react";
+import {
+  Clock,
+  Copy,
+  Check,
+  ChevronDown,
+  ChevronUp,
+  Edit3,
+  Trash2,
+  Package,
+} from "lucide-react";
 
 interface ManifestCardProps {
   trip: Trip;
   currentUser?: User | null;
   onEdit?: (trip: Trip) => void;
   onDelete?: (tripId: string) => void;
+  showCopyButton?: boolean;
 }
 
 export default function ManifestCard({
@@ -17,6 +27,7 @@ export default function ManifestCard({
   currentUser,
   onEdit,
   onDelete,
+  showCopyButton = false,
 }: ManifestCardProps) {
   const [copied, setCopied] = useState(false);
   const [isExpanded, setIsExpanded] = useState(false);
@@ -24,7 +35,9 @@ export default function ManifestCard({
   const manifests = trip.manifests || [];
   const initialLimit = 4;
   const hasMore = manifests.length > initialLimit;
-  const displayedManifests = isExpanded ? manifests : manifests.slice(0, initialLimit);
+  const displayedManifests = isExpanded
+    ? manifests
+    : manifests.slice(0, initialLimit);
 
   const canManage =
     currentUser &&
@@ -50,24 +63,17 @@ export default function ManifestCard({
             isPuma ? "bg-[#0A2E4D]" : "bg-[#0A2E4D]"
           }`}
         >
-          <div className="flex items-center gap-2">
+          <div className="flex items-center justify-between w-full gap-2">
             <span
               className={`px-2.5 py-0.5 rounded-full text-xs font-extrabold uppercase tracking-wider ${
-                isPuma
-                  ? "bg-sky-500 text-white"
-                  : "bg-amber-500 text-white"
+                isPuma ? "bg-sky-500 text-white" : "bg-amber-500 text-white"
               }`}
             >
-              📍 Area {trip.lokasi}
+              {trip.lokasi}
             </span>
             <span className="text-xs text-slate-300 font-medium">
               {formatDateIndo(trip.tanggal_berangkat)}
             </span>
-          </div>
-
-          <div className="flex items-center gap-1.5 text-xs font-bold bg-white/10 px-2.5 py-1 rounded-lg backdrop-blur-sm text-slate-200">
-            <Clock className="w-3.5 h-3.5 text-slate-300" />
-            <span>OTW Jam {trip.jam_otw}</span>
           </div>
         </div>
 
@@ -76,11 +82,10 @@ export default function ManifestCard({
           <div className="flex items-start justify-between gap-3">
             <div>
               <h4 className="text-lg sm:text-xl font-extrabold text-slate-900 uppercase tracking-tight flex items-center gap-2">
-                <span>🚢</span>
                 <span>{trip.pengangkut?.nama_kapal || "KMN Pengangkut"}</span>
               </h4>
               <p className="text-sm text-slate-600 font-medium mt-0.5">
-                👨‍✈️ Juragan:{" "}
+                Juragan:{" "}
                 <span className="font-semibold text-slate-900">
                   {trip.pengangkut?.nama_juragan || "Juragan Kapal"}
                 </span>
@@ -88,8 +93,7 @@ export default function ManifestCard({
             </div>
 
             <span className="shrink-0 inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-emerald-50 text-emerald-700 border border-emerald-200">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-              {trip.is_tracking_active ? "Sedang Berlayar" : "Sudah Sandar"}
+              {trip.is_tracking_active ? "Berlayar" : "Bersandar"}
             </span>
           </div>
         </div>
@@ -147,75 +151,94 @@ export default function ManifestCard({
               ) : (
                 <>
                   <ChevronDown className="w-4 h-4" />
-                  Lihat Selengkapnya (+{manifests.length - initialLimit} nelayan lagi)
+                  Lihat Selengkapnya (+{manifests.length - initialLimit} nelayan
+                  lagi)
                 </>
               )}
             </button>
           )}
+
+          {/* Total Muatan (Di bawah rincian nelayan) */}
+          <div className="mt-3.5 pt-3 border-t border-slate-100 flex items-center justify-between">
+            <div className="flex items-center gap-1.5 text-xs font-bold text-slate-600 uppercase tracking-wide">
+              <Package className="w-4 h-4 text-amber-500" />
+              <span>Total Muatan:</span>
+            </div>
+            <span className="text-lg font-black font-mono-numbers text-slate-900">
+              {trip.total_gabus}{" "}
+              <span className="text-xs font-bold text-slate-500 uppercase font-sans">
+                GABUS
+              </span>
+            </span>
+          </div>
         </div>
       </div>
 
-      {/* Footer Total & Actions */}
+      {/* Footer: Waktu Keberangkatan & Actions */}
       <div className="px-4 py-3 sm:px-5 bg-slate-50 border-t border-slate-200">
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-1.5 text-xs font-bold text-slate-600 uppercase tracking-wide">
-            <Package className="w-4 h-4 text-amber-500" />
-            <span>Total Muatan:</span>
+        <div
+          className={`flex items-center justify-between ${
+            showCopyButton || (canManage && (onEdit || onDelete)) ? "mb-3" : ""
+          }`}
+        >
+          <div className="flex items-center gap-1.5 text-xs font-bold text-slate-600 uppercase tracking-wider">
+            <span>Waktu Keberangkatan:</span>
           </div>
-          <span className="text-lg font-black font-mono-numbers text-slate-900">
-            {trip.total_gabus}{" "}
-            <span className="text-xs font-bold text-slate-500 uppercase font-sans">
-              GABUS
-            </span>
-          </span>
+          <div className="inline-flex items-center gap-1.5 font-bold text-slate-700 bg-white border border-slate-200/80 px-2.5 py-1 rounded-lg text-xs shadow-xs">
+            <span>Pukul {trip.jam_otw}</span>
+          </div>
         </div>
 
         {/* Action Buttons */}
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handleCopyWhatsApp}
-            className={`flex-1 py-2 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all ${
-              copied
-                ? "bg-emerald-600 text-white"
-                : "bg-emerald-50 text-emerald-700 border border-emerald-300 hover:bg-emerald-100"
-            }`}
-          >
-            {copied ? (
-              <>
-                <Check className="w-4 h-4 text-white" />
-                <span>Format WA Tersalin!</span>
-              </>
-            ) : (
-              <>
-                <Copy className="w-4 h-4 text-emerald-600" />
-                <span>Salin Format WhatsApp</span>
-              </>
+        {(showCopyButton || (canManage && (onEdit || onDelete))) && (
+          <div className="flex items-center gap-2">
+            {showCopyButton && (
+              <button
+                onClick={handleCopyWhatsApp}
+                className={`flex-1 py-2 px-3 rounded-xl font-bold text-xs flex items-center justify-center gap-1.5 shadow-sm transition-all ${
+                  copied
+                    ? "bg-emerald-600 text-white"
+                    : "bg-emerald-50 text-emerald-700 border border-emerald-300 hover:bg-emerald-100"
+                }`}
+              >
+                {copied ? (
+                  <>
+                    <Check className="w-4 h-4 text-white" />
+                    <span>Format WA Tersalin!</span>
+                  </>
+                ) : (
+                  <>
+                    <Copy className="w-4 h-4 text-emerald-600" />
+                    <span>Salin Format WhatsApp</span>
+                  </>
+                )}
+              </button>
             )}
-          </button>
 
-          {canManage && (
-            <div className="flex items-center gap-1">
-              {onEdit && (
-                <button
-                  onClick={() => onEdit(trip)}
-                  title="Edit Laporan"
-                  className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 transition-colors"
-                >
-                  <Edit3 className="w-4 h-4" />
-                </button>
-              )}
-              {onDelete && (
-                <button
-                  onClick={() => onDelete(trip.id)}
-                  title="Hapus Laporan"
-                  className="p-2 rounded-xl bg-slate-100 hover:bg-red-50 text-slate-600 hover:text-red-600 transition-colors"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </button>
-              )}
-            </div>
-          )}
-        </div>
+            {canManage && (
+              <div className="flex items-center gap-1">
+                {onEdit && (
+                  <button
+                    onClick={() => onEdit(trip)}
+                    title="Edit Laporan"
+                    className="p-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 transition-colors"
+                  >
+                    <Edit3 className="w-4 h-4" />
+                  </button>
+                )}
+                {onDelete && (
+                  <button
+                    onClick={() => onDelete(trip.id)}
+                    title="Hapus Laporan"
+                    className="p-2 rounded-xl bg-slate-100 hover:bg-red-50 text-slate-600 hover:text-red-600 transition-colors"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

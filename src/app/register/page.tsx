@@ -171,7 +171,7 @@ export default function RegisterPage() {
                 onChange={(e) => setNamaKapal(e.target.value)}
                 placeholder={
                   role === "kapal_pengangkut"
-                    ? "Contoh: KMN ⭐ NADITA"
+                    ? "Contoh: KMN BINTANG NADITA"
                     : "Contoh: Tinggi Moncong Mb"
                 }
                 required

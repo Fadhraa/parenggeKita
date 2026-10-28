@@ -14,7 +14,7 @@ export const MOCK_USERS: User[] = [
     id: "usr-trans-01",
     username: "kmn_nadita",
     role: "kapal_pengangkut",
-    nama_kapal: "KMN ⭐ NADITA",
+    nama_kapal: "KMN BINTANG NADITA",
     nama_juragan: "Jrg Pak Kambong",
     lokasi_default: "Puma",
     no_whatsapp: "081298765432",
@@ -171,7 +171,7 @@ export const MOCK_LOGISTICS: LogisticRequest[] = [
         request_id: "log-req-01",
         sender_id: "usr-admin-01",
         pesan:
-          "Siap Kapten Basir, pesanan sudah dicatat dan ditugaskan ke KMN ⭐ NADITA (Jrg Pak Kambong).",
+          "Siap Kapten Basir, pesanan sudah dicatat dan ditugaskan ke KMN BINTANG NADITA (Jrg Pak Kambong).",
         created_at: new Date(Date.now() - 105 * 60 * 1000).toISOString(),
         sender: MOCK_USERS[0],
       },

@@ -327,6 +327,7 @@ export default function AdminDashboard() {
               key={trip.id}
               trip={trip}
               currentUser={currentUser}
+              showCopyButton={true}
               onEdit={(t) => {
                 setEditingTrip(t);
                 setIsModalOpen(true);
