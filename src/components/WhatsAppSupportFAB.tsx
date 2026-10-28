@@ -1,9 +1,17 @@
 "use client";
 
 import React from "react";
+import { usePathname } from "next/navigation";
 import { MessageCircle } from "lucide-react";
 
 export default function WhatsAppSupportFAB() {
+  const pathname = usePathname();
+
+  // Sembunyikan tombol bantuan WA di halaman login dan register
+  if (pathname === "/login" || pathname === "/register") {
+    return null;
+  }
+
   const phone = process.env.NEXT_PUBLIC_SUPPORT_WHATSAPP || "6281234567890";
   const message = encodeURIComponent(
     "Halo Admin Pengelola Parengge Kita / TPI Galesong Utara, saya ingin bertanya terkait sistem pencatatan gabus dan logistik..."

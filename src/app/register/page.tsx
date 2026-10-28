@@ -3,14 +3,16 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Anchor, CheckCircle2, AlertCircle } from "lucide-react";
+import { Anchor, CheckCircle2, AlertCircle, LogOut } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import { setSessionUser } from "@/lib/session";
 import { User, UserRole, LokasiMuat } from "@/types";
 
 export default function RegisterPage() {
   const router = useRouter();
-  const [role, setRole] = useState<"kapal_nelayan" | "kapal_pengangkut">("kapal_nelayan");
+  const [role, setRole] = useState<"kapal_nelayan" | "kapal_pengangkut">(
+    "kapal_nelayan",
+  );
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [namaKapal, setNamaKapal] = useState("");
@@ -51,7 +53,9 @@ export default function RegisterPage() {
         }
       } else {
         if (error?.code === "23505") {
-          setErrorMsg("Username sudah digunakan. Silakan gunakan username lain.");
+          setErrorMsg(
+            "Username sudah digunakan. Silakan gunakan username lain.",
+          );
         } else {
           setErrorMsg(error?.message || "Gagal melakukan pendaftaran.");
         }
@@ -65,7 +69,16 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="min-h-[85vh] flex items-center justify-center px-4 py-12">
+    <div className="relative min-h-[100vh] flex items-center justify-center p-4 py-16 sm:py-12">
+      {/* Tombol Kembali ke Landing Page */}
+      <Link
+        href="/"
+        className="absolute top-4 left-4 sm:top-6 sm:left-6 z-10 inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/90 backdrop-blur-sm border border-slate-200/80 hover:border-coral-300 shadow-sm text-coral hover:text-coral-hover hover:bg-coral-50/60 font-bold text-xs sm:text-sm transition-all hover:-translate-x-0.5 group"
+      >
+        <LogOut className="w-4 h-4 text-coral group-hover:scale-105 transition-transform" />
+        <span>Kembali</span>
+      </Link>
+
       <div className="w-full max-w-lg bg-white rounded-3xl shadow-xl border border-slate-200 p-6 sm:p-8 space-y-6">
         {/* Header */}
         <div className="text-center space-y-2">
@@ -96,22 +109,19 @@ export default function RegisterPage() {
             <button
               type="button"
               onClick={() => setRole("kapal_nelayan")}
-              className={`p-3.5 rounded-2xl border text-left flex items-start gap-3 transition-all ${
+              className={`p-3.5 rounded-2xl border text-left flex items-center gap-3 transition-all ${
                 role === "kapal_nelayan"
                   ? "border-sky-500 bg-sky-50/70 ring-2 ring-sky-400/20"
                   : "border-slate-200 hover:bg-slate-50"
               }`}
             >
-              <div
-                className={`p-2 rounded-xl ${
-                  role === "kapal_nelayan"
-                    ? "bg-sky-500 text-white"
-                    : "bg-slate-100 text-slate-700"
-                }`}
-              >
-                <span>🎣</span>
-              </div>
-              <div>
+              <img
+                src="assets/Kapal/Kapal_nelayan_1.png"
+                className="w-12 h-12"
+                alt=""
+              />
+
+              <div className="flex flex-col">
                 <span className="font-extrabold text-xs sm:text-sm text-slate-900 block">
                   Kapal Nelayan
                 </span>
@@ -124,21 +134,18 @@ export default function RegisterPage() {
             <button
               type="button"
               onClick={() => setRole("kapal_pengangkut")}
-              className={`p-3.5 rounded-2xl border text-left flex items-start gap-3 transition-all ${
+              className={`p-3.5 rounded-2xl border text-left flex items-center gap-3 transition-all ${
                 role === "kapal_pengangkut"
                   ? "border-slate-900 bg-slate-100 ring-2 ring-slate-800/20"
                   : "border-slate-200 hover:bg-slate-50"
               }`}
             >
-              <div
-                className={`p-2 rounded-xl ${
-                  role === "kapal_pengangkut"
-                    ? "bg-[#0A2E4D] text-white"
-                    : "bg-slate-100 text-slate-700"
-                }`}
-              >
-                <span>🚢</span>
-              </div>
+              <img
+                src="assets/Kapal/Kapal_angkut_2.png"
+                className="w-12 h-12"
+                alt=""
+              />
+
               <div>
                 <span className="font-extrabold text-xs sm:text-sm text-slate-900 block">
                   Kapal Pengangkut
@@ -253,7 +260,9 @@ export default function RegisterPage() {
             className="w-full py-3.5 mt-2 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-extrabold text-sm flex items-center justify-center gap-2 shadow-lg shadow-sky-500/25 transition-all disabled:opacity-50"
           >
             <CheckCircle2 className="w-5 h-5" />
-            <span>{isLoading ? "Mendaftarkan Kapal..." : "Selesaikan Pendaftaran"}</span>
+            <span>
+              {isLoading ? "Mendaftarkan Kapal..." : "Selesaikan Pendaftaran"}
+            </span>
           </button>
         </form>
 

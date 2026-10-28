@@ -26,8 +26,8 @@ export default function BottomNav() {
     return "/dashboard/nelayan";
   };
 
-  // Sembunyikan bilah navigasi bawah di landing page publik
-  if (pathname === "/") {
+  // Sembunyikan bilah navigasi bawah di landing page publik, halaman login, dan register
+  if (pathname === "/" || pathname === "/login" || pathname === "/register") {
     return null;
   }
 

@@ -31,24 +31,59 @@ export default function Navbar() {
     router.push("/");
   };
 
-  // Handler untuk secret login via logo (double click / long press di mobile)
-  const timerRef = React.useRef<NodeJS.Timeout | null>(null);
+  // Handler untuk secret login via logo:
+  // Mendukung:
+  // 1. Double tap di layar sentuh HP / mobile
+  // 2. Double click di mouse / laptop
+  // 3. Tekan & tahan (Long press ~700ms) di mobile
+  const lastClickRef = React.useRef<number>(0);
+  const clickTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
+  const longPressTimerRef = React.useRef<NodeJS.Timeout | null>(null);
 
-  const handleLogoDoubleClick = (e: React.MouseEvent) => {
+  useEffect(() => {
+    return () => {
+      if (clickTimeoutRef.current) clearTimeout(clickTimeoutRef.current);
+      if (longPressTimerRef.current) clearTimeout(longPressTimerRef.current);
+    };
+  }, []);
+
+  const handleLogoClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    router.push("/login");
+    const now = Date.now();
+    const DOUBLE_CLICK_DELAY = 400; // ms
+
+    if (now - lastClickRef.current < DOUBLE_CLICK_DELAY) {
+      // Ketukan kedua terdeteksi (Double tap / double click)
+      if (clickTimeoutRef.current) {
+        clearTimeout(clickTimeoutRef.current);
+        clickTimeoutRef.current = null;
+      }
+      lastClickRef.current = 0;
+      router.push("/login");
+    } else {
+      // Ketukan pertama
+      lastClickRef.current = now;
+      if (clickTimeoutRef.current) {
+        clearTimeout(clickTimeoutRef.current);
+      }
+      clickTimeoutRef.current = setTimeout(() => {
+        // Jika tidak ada ketukan kedua, baru navigasi normal ke Beranda
+        router.push("/");
+        clickTimeoutRef.current = null;
+      }, DOUBLE_CLICK_DELAY);
+    }
   };
 
   const handleTouchStart = () => {
-    timerRef.current = setTimeout(() => {
+    longPressTimerRef.current = setTimeout(() => {
       router.push("/login");
     }, 700);
   };
 
   const handleTouchEnd = () => {
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-      timerRef.current = null;
+    if (longPressTimerRef.current) {
+      clearTimeout(longPressTimerRef.current);
+      longPressTimerRef.current = null;
     }
   };
 
@@ -59,19 +94,27 @@ export default function Navbar() {
     return "/dashboard/nelayan";
   };
 
+  // Sembunyikan Navbar di halaman login dan register
+  if (pathname === "/login" || pathname === "/register") {
+    return null;
+  }
+
   return (
     <header className="sticky top-0 z-50 bg-white/95 backdrop-blur-md text-slate-800 border-b border-slate-200/80 shadow-[0_1px_3px_0_rgba(0,0,0,0.03)]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="relative flex items-center justify-center md:justify-between h-16">
           {/* Logo Brand dengan Akses Login Rahasia (Tepat di tengah pada mobile, di kiri pada desktop) */}
           <div
-            onDoubleClick={handleLogoDoubleClick}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
             onTouchCancel={handleTouchEnd}
-            className="select-none flex items-center justify-center"
+            className="select-none flex items-center justify-center touch-manipulation cursor-pointer"
           >
-            <Link href="/" className="flex items-center gap-3 group">
+            <Link
+              href="/"
+              onClick={handleLogoClick}
+              className="flex items-center gap-3 group"
+            >
               <img
                 src="/assets/LOGO_KAPAL.png"
                 alt="Logo Parengge Kita"

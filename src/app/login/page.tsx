@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Ship, LogIn, Lock, User as UserIcon, AlertCircle } from "lucide-react";
+import { Ship, LogIn, Lock, User as UserIcon, AlertCircle, LogOut } from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import { MOCK_USERS } from "@/lib/mockData";
 import { setSessionUser } from "@/lib/session";
@@ -42,7 +42,7 @@ export default function LoginPage() {
         const mockMatch = MOCK_USERS.find(
           (u) =>
             u.username.toLowerCase() === username.trim().toLowerCase() &&
-            (password.trim() === "password123" || password.trim() === "admin")
+            (password.trim() === "password123" || password.trim() === "admin"),
         );
         if (mockMatch) {
           matchedUser = mockMatch;
@@ -60,7 +60,9 @@ export default function LoginPage() {
           router.push("/dashboard/nelayan");
         }
       } else {
-        setErrorMsg("Akun tidak ditemukan. Silakan periksa kembali username Anda.");
+        setErrorMsg(
+          "Akun tidak ditemukan. Silakan periksa kembali username Anda.",
+        );
       }
     } catch (err: any) {
       console.error(err);
@@ -71,13 +73,20 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center px-4 py-12">
+    <div className="relative min-h-[100vh] flex items-center justify-center p-4 py-16 sm:py-12">
+      {/* Tombol Kembali ke Landing Page */}
+      <Link
+        href="/"
+        className="absolute top-4 left-4 sm:top-6 sm:left-6 z-10 inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/90 backdrop-blur-sm border border-slate-200/80 hover:border-coral-300 shadow-sm text-coral hover:text-coral-hover hover:bg-coral-50/60 font-bold text-xs sm:text-sm transition-all hover:-translate-x-0.5 group"
+      >
+        <LogOut className="w-4 h-4 text-coral group-hover:scale-105 transition-transform" />
+        <span>Kembali</span>
+      </Link>
+
       <div className="w-full max-w-md bg-white rounded-3xl shadow-xl border border-slate-200 p-6 sm:p-8 space-y-6">
         {/* Header */}
         <div className="text-center space-y-2">
-          <div className="w-14 h-14 rounded-2xl bg-[#0A2E4D] text-white flex items-center justify-center mx-auto shadow-lg">
-            <Ship className="w-8 h-8 text-sky-400" />
-          </div>
+          <img src="assets/LOGO_KAPAL.png" alt="" className="w-16 h-16" />
           <h2 className="text-2xl font-black text-slate-900 tracking-tight">
             Masuk ke Parengge Kita
           </h2>
@@ -97,7 +106,7 @@ export default function LoginPage() {
         <form onSubmit={handleLogin} className="space-y-4">
           <div>
             <label className="block text-xs font-bold text-slate-700 uppercase mb-1.5">
-              Username Akun
+              Username
             </label>
             <div className="relative">
               <UserIcon className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
