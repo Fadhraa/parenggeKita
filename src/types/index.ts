@@ -62,6 +62,8 @@ export interface LogisticRequest {
   lokasi_tujuan: LokasiMuat;
   rincian_barang: string;
   items_custom?: string[];
+  bbm_jenis?: "Solar" | "Bensin" | null;
+  bbm_jumlah?: number;
   status: LogisticStatus;
   created_at?: string;
   updated_at?: string;

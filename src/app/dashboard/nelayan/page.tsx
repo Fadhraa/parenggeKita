@@ -105,6 +105,8 @@ export default function NelayanDashboard() {
     lokasi_tujuan: LokasiMuat;
     rincian_barang: string;
     items_custom?: string[];
+    bbm_jenis?: "Solar" | "Bensin" | null;
+    bbm_jumlah?: number;
   }) => {
     const { data: newReq, error } = await supabase
       .from("logistic_requests")
@@ -114,6 +116,8 @@ export default function NelayanDashboard() {
           lokasi_tujuan: requestData.lokasi_tujuan,
           rincian_barang: requestData.rincian_barang,
           items_custom: requestData.items_custom || [],
+          bbm_jenis: requestData.bbm_jenis || null,
+          bbm_jumlah: requestData.bbm_jumlah || 0,
           status: "MENUNGGU_ADMIN",
         },
       ])
@@ -129,6 +133,8 @@ export default function NelayanDashboard() {
         lokasi_tujuan: requestData.lokasi_tujuan,
         rincian_barang: requestData.rincian_barang,
         items_custom: requestData.items_custom || [],
+        bbm_jenis: requestData.bbm_jenis || null,
+        bbm_jumlah: requestData.bbm_jumlah || 0,
         status: "MENUNGGU_ADMIN",
         created_at: new Date().toISOString(),
       };
@@ -217,10 +223,10 @@ export default function NelayanDashboard() {
                   <Package className="w-6 h-6 text-orange-500" />
                 </div>
                 <div className="space-y-1">
-                  <span className="text-xs font-extrabold text-orange-600 uppercase tracking-wider block">
+                  <span className="text-[11px] md:text-xs font-extrabold text-orange-600 uppercase tracking-wider block">
                     Ikan Anda Sedang OTW ke TPI
                   </span>
-                  <h4 className="text-base sm:text-lg font-extrabold text-slate-900">
+                  <h4 className="text-[11px] sm:text-lg font-extrabold text-slate-900">
                     Muatan:{" "}
                     <span className="text-orange-600 font-mono-numbers font-black">
                       {jumlahGabus} Gabus
@@ -238,8 +244,7 @@ export default function NelayanDashboard() {
       <div className="space-y-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Snowflake className="w-5 h-5 text-sky-500" />
-            <h3 className="font-extrabold text-lg text-slate-900">
+            <h3 className="text-xs font-extrabold uppercase text-slate-500 tracking-wider">
               Riwayat Pesanan Logistik Saya ({myRequests.length})
             </h3>
           </div>
@@ -247,7 +252,6 @@ export default function NelayanDashboard() {
 
         {myRequests.length === 0 ? (
           <div className="bg-white rounded-2xl p-10 text-center border border-slate-200 space-y-3">
-            <Snowflake className="w-12 h-12 text-slate-300 mx-auto" />
             <h4 className="text-base font-bold text-slate-800">
               Belum ada pesanan logistik aktif
             </h4>
@@ -265,10 +269,10 @@ export default function NelayanDashboard() {
               >
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <span className="text-xs font-bold text-sky-600 uppercase">
-                      📍 Tujuan: Area {req.lokasi_tujuan}
+                    <span className="text-sm font-bold text-sky-600 uppercase">
+                      titik antar: {req.lokasi_tujuan}
                     </span>
-                    <h4 className="text-sm font-semibold text-slate-500 mt-0.5">
+                    <h4 className="text-[11px] font-semibold text-slate-500 mt-0.5">
                       Dibuat pada{" "}
                       {new Date(
                         req.created_at || Date.now(),
@@ -286,16 +290,16 @@ export default function NelayanDashboard() {
                     }`}
                   >
                     {req.status === "MENUNGGU_ADMIN"
-                      ? "⏳ Menunggu Admin"
+                      ? "Menunggu Admin"
                       : req.status === "DITUGASKAN_KE_PENGANGKUT"
-                        ? "🚢 Dibawa Pengangkut"
-                        : "✅ Selesai Diterima"}
+                        ? "Diantar"
+                        : "Diterima"}
                   </span>
                 </div>
 
                 <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs">
                   <span className="font-bold text-slate-700 block mb-1">
-                    📦 Rincian Barang:
+                    Rincian Barang:
                   </span>
                   <p className="text-slate-800 font-semibold">
                     {req.rincian_barang}
@@ -315,7 +319,7 @@ export default function NelayanDashboard() {
                       setSelectedChatRequest(req);
                       setIsChatOpen(true);
                     }}
-                    className="px-3 py-1.5 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 font-bold flex items-center gap-1.5 transition-colors border border-sky-200"
+                    className="px-3 py-1.5 rounded-xl bg-primary hover:bg-sky-500 text-white font-bold flex items-center justify-center gap-1.5 transition-colors duration-[400ms] border border-sky-200"
                   >
                     <MessageCircle className="w-3.5 h-3.5" />
                     <span>Chat ({req.messages?.length || 0})</span>

@@ -6,7 +6,6 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   Anchor,
   LogOut,
-  LayoutDashboard,
   Navigation,
 } from "lucide-react";
 import { getSessionUser, clearSessionUser } from "@/lib/session";
@@ -209,24 +208,9 @@ export default function Navbar() {
             </Link>
           </nav>
 
-          {/* User Auth: Hanya tampil jika sudah login (Dashboard & Logout) */}
+          {/* User Auth: Hanya tampil jika sudah login (Logout & Identitas Akun) */}
           {user ? (
             <div className="absolute right-0 md:static flex items-center gap-2 sm:gap-3">
-              <Link
-                href={getDashboardHref()}
-                className="flex items-center gap-2 px-3.5 py-2 rounded-xl bg-primary hover:bg-[#07182b] text-white font-medium text-xs sm:text-sm shadow-sm hover:shadow transition-all"
-              >
-                <LayoutDashboard className="w-4 h-4 text-sky-400" />
-                <span className="hidden sm:inline">
-                  {user.role === "admin"
-                    ? "Dashboard Admin"
-                    : user.role === "kapal_pengangkut"
-                      ? "Dashboard Pengangkut"
-                      : "Dashboard Nelayan"}
-                </span>
-                <span className="sm:hidden">Dashboard</span>
-              </Link>
-
               <div className="hidden lg:flex flex-col text-right">
                 <span className="text-xs font-bold text-slate-800 truncate max-w-[130px]">
                   {user.nama_kapal}
