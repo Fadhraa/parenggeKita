@@ -1,15 +1,39 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import { useRouter } from "next/navigation";
 import { getSessionUser } from "@/lib/session";
 import { supabase } from "@/lib/supabaseClient";
 import { MOCK_TRIPS, MOCK_USERS, MOCK_LOGISTICS } from "@/lib/mockData";
-import { User, Trip, LogisticRequest } from "@/types";
+import { User, Trip, LogisticRequest, LokasiMuat } from "@/types";
 import ManifestCard from "@/components/ManifestCard";
 import ManifestFormModal from "@/components/ManifestFormModal";
 import LogisticChatDrawer from "@/components/LogisticChatDrawer";
-import { ShieldCheck, Plus, Package, Snowflake, Navigation, MessageCircle } from "lucide-react";
+import {
+  ShieldCheck,
+  Plus,
+  Package,
+  Snowflake,
+  Navigation,
+  MessageCircle,
+  Ship,
+  Notebook,
+  NotepadText,
+} from "lucide-react";
+
+// Dynamically import LiveTrackingMap to avoid SSR issues with Leaflet
+const LiveTrackingMap = dynamic(() => import("@/components/LiveTrackingMap"), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-[380px] bg-slate-100 rounded-2xl flex items-center justify-center border border-slate-200">
+      <div className="flex items-center gap-2 text-slate-500 font-semibold text-sm">
+        <Navigation className="w-5 h-5 text-sky-500 animate-spin" />
+        <span>Memuat Peta Live Tracking...</span>
+      </div>
+    </div>
+  ),
+});
 
 export default function AdminDashboard() {
   const router = useRouter();
@@ -18,7 +42,9 @@ export default function AdminDashboard() {
   const [requests, setRequests] = useState<LogisticRequest[]>([]);
   const [transporters, setTransporters] = useState<User[]>([]);
   const [fishermen, setFishermen] = useState<User[]>([]);
-  const [activeTab, setActiveTab] = useState<"muatan" | "dispatcher">("muatan");
+  const [activeTab, setActiveTab] = useState<
+    "muatan" | "dispatcher" | "tracking"
+  >("muatan");
 
   // Selection states for assignment
   const [selectedTransporterMap, setSelectedTransporterMap] = useState<
@@ -28,7 +54,8 @@ export default function AdminDashboard() {
   // Modals state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTrip, setEditingTrip] = useState<Trip | null>(null);
-  const [selectedChatRequest, setSelectedChatRequest] = useState<LogisticRequest | null>(null);
+  const [selectedChatRequest, setSelectedChatRequest] =
+    useState<LogisticRequest | null>(null);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -37,11 +64,13 @@ export default function AdminDashboard() {
     try {
       const { data: tripsData } = await supabase
         .from("trips")
-        .select(`
+        .select(
+          `
           *,
           pengangkut:users!trips_pengangkut_id_fkey(*),
           manifests:trip_manifests(*)
-        `)
+        `,
+        )
         .order("tanggal_berangkat", { ascending: false });
 
       if (tripsData && tripsData.length > 0) {
@@ -52,7 +81,8 @@ export default function AdminDashboard() {
 
       const { data: logData } = await supabase
         .from("logistic_requests")
-        .select(`
+        .select(
+          `
           *,
           nelayan:users!logistic_requests_nelayan_id_fkey(*),
           pengangkut:users!logistic_requests_pengangkut_id_fkey(*),
@@ -60,7 +90,8 @@ export default function AdminDashboard() {
             *,
             sender:users!logistic_messages_sender_id_fkey(*)
           )
-        `)
+        `,
+        )
         .order("created_at", { ascending: false });
 
       if (logData && logData.length > 0) {
@@ -70,7 +101,8 @@ export default function AdminDashboard() {
       }
 
       const { data: usersData } = await supabase.from("users").select("*");
-      const allUsers: User[] = usersData && usersData.length > 0 ? (usersData as User[]) : MOCK_USERS;
+      const allUsers: User[] =
+        usersData && usersData.length > 0 ? (usersData as User[]) : MOCK_USERS;
       setTransporters(allUsers.filter((u) => u.role === "kapal_pengangkut"));
       setFishermen(allUsers.filter((u) => u.role === "kapal_nelayan"));
     } catch (e) {
@@ -91,7 +123,11 @@ export default function AdminDashboard() {
       return;
     }
     if (user.role !== "admin") {
-      router.push(user.role === "kapal_pengangkut" ? "/dashboard/pengangkut" : "/dashboard/nelayan");
+      router.push(
+        user.role === "kapal_pengangkut"
+          ? "/dashboard/pengangkut"
+          : "/dashboard/nelayan",
+      );
       return;
     }
     setCurrentUser(user);
@@ -128,8 +164,8 @@ export default function AdminDashboard() {
                 status: "DITUGASKAN_KE_PENGANGKUT",
                 pengangkut: matchTrans,
               }
-            : r
-        )
+            : r,
+        ),
       );
     }
     alert("Kapal pengangkut berhasil ditugaskan!");
@@ -137,35 +173,94 @@ export default function AdminDashboard() {
 
   const handleSaveTrip = async (
     tripData: Partial<Trip>,
-    manifestRows: { nama_kapal_nelayan: string; jumlah_gabus: number; nelayan_id?: string | null }[]
+    manifestRows: {
+      nama_kapal_nelayan: string;
+      jumlah_gabus: number;
+      nelayan_id?: string | null;
+    }[],
   ) => {
-    if (editingTrip) {
-      await supabase.from("trips").update(tripData).eq("id", editingTrip.id);
-      await supabase.from("trip_manifests").delete().eq("trip_id", editingTrip.id);
-      const rows = manifestRows.map((r) => ({
-        trip_id: editingTrip.id,
-        nama_kapal_nelayan: r.nama_kapal_nelayan,
-        jumlah_gabus: r.jumlah_gabus,
-        nelayan_id: r.nelayan_id || null,
-      }));
-      await supabase.from("trip_manifests").insert(rows);
-    } else {
-      const { data: newTrip } = await supabase
-        .from("trips")
-        .insert([tripData])
-        .select()
-        .single();
-
-      if (newTrip) {
+    try {
+      if (editingTrip) {
+        await supabase.from("trips").update(tripData).eq("id", editingTrip.id);
+        await supabase
+          .from("trip_manifests")
+          .delete()
+          .eq("trip_id", editingTrip.id);
         const rows = manifestRows.map((r) => ({
-          trip_id: newTrip.id,
+          trip_id: editingTrip.id,
           nama_kapal_nelayan: r.nama_kapal_nelayan,
           jumlah_gabus: r.jumlah_gabus,
           nelayan_id: r.nelayan_id || null,
         }));
         await supabase.from("trip_manifests").insert(rows);
+      } else {
+        const { data: newTrip } = await supabase
+          .from("trips")
+          .insert([tripData])
+          .select()
+          .single();
+
+        if (newTrip) {
+          const rows = manifestRows.map((r) => ({
+            trip_id: newTrip.id,
+            nama_kapal_nelayan: r.nama_kapal_nelayan,
+            jumlah_gabus: r.jumlah_gabus,
+            nelayan_id: r.nelayan_id || null,
+          }));
+          await supabase.from("trip_manifests").insert(rows);
+        }
       }
+    } catch (err) {
+      console.warn("Error saving trip to supabase", err);
     }
+
+    // Update fallback lokal agar tampilan langsung sinkron
+    const chosenTrans = transporters.find(
+      (t) => t.id === tripData.pengangkut_id,
+    );
+    if (editingTrip) {
+      setTrips((prev) =>
+        prev.map((t) =>
+          t.id === editingTrip.id
+            ? {
+                ...t,
+                ...tripData,
+                pengangkut: chosenTrans || t.pengangkut,
+                manifests: manifestRows.map((m, idx) => ({
+                  id: `man-local-${idx}`,
+                  trip_id: editingTrip.id,
+                  nama_kapal_nelayan: m.nama_kapal_nelayan,
+                  jumlah_gabus: m.jumlah_gabus,
+                  nelayan_id: m.nelayan_id || null,
+                })),
+              }
+            : t,
+        ),
+      );
+    } else {
+      const mockId = `trip-${Date.now()}`;
+      const mockTrip: Trip = {
+        id: mockId,
+        lokasi: tripData.lokasi || "Puma",
+        tanggal_berangkat:
+          tripData.tanggal_berangkat || new Date().toISOString().split("T")[0],
+        jam_otw: tripData.jam_otw || "14:00",
+        zona_waktu: tripData.zona_waktu || "Waktu Puma",
+        total_gabus: tripData.total_gabus || 0,
+        pengangkut_id: tripData.pengangkut_id || transporters[0]?.id || "",
+        is_tracking_active: true,
+        pengangkut: chosenTrans || transporters[0],
+        manifests: manifestRows.map((m, idx) => ({
+          id: `man-${Date.now()}-${idx}`,
+          trip_id: mockId,
+          nama_kapal_nelayan: m.nama_kapal_nelayan,
+          jumlah_gabus: m.jumlah_gabus,
+          nelayan_id: m.nelayan_id || null,
+        })),
+      };
+      setTrips((prev) => [mockTrip, ...prev]);
+    }
+
     loadData();
     setEditingTrip(null);
   };
@@ -194,37 +289,30 @@ export default function AdminDashboard() {
         prev.map((r) =>
           r.id === requestId
             ? { ...r, messages: [...(r.messages || []), newMsg as any] }
-            : r
-        )
+            : r,
+        ),
       );
       if (selectedChatRequest && selectedChatRequest.id === requestId) {
         setSelectedChatRequest((prev) =>
-          prev ? { ...prev, messages: [...(prev.messages || []), newMsg as any] } : null
+          prev
+            ? { ...prev, messages: [...(prev.messages || []), newMsg as any] }
+            : null,
         );
       }
     }
   };
 
   const totalGabus = trips.reduce((s, t) => s + (t.total_gabus || 0), 0);
-  const pendingRequests = requests.filter((r) => r.status === "MENUNGGU_ADMIN").length;
+  const pendingRequests = requests.filter(
+    (r) => r.status === "MENUNGGU_ADMIN",
+  ).length;
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-6">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 flex flex-col gap-6">
       {/* Admin Header Banner */}
       <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-md border border-slate-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-[#0A2E4D] text-white flex items-center justify-center shadow-lg">
-            <ShieldCheck className="w-8 h-8 text-sky-400" />
-          </div>
           <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-sky-50 text-sky-700 uppercase">
-                Pusat Kendali Admin TPI
-              </span>
-              <span className="text-xs text-slate-500">
-                TPI Galesong Utara
-              </span>
-            </div>
             <h1 className="text-xl sm:text-2xl font-black text-slate-900 uppercase mt-0.5">
               {currentUser.nama_kapal}
             </h1>
@@ -254,7 +342,7 @@ export default function AdminDashboard() {
             <span className="text-xs font-bold text-slate-500 uppercase">
               Total Seluruh Gabus
             </span>
-            <span className="text-2xl font-black font-mono-numbers text-slate-900 block mt-1">
+            <span className="text-2xl font-black font-mono-numbers text-amber-600 block mt-1">
               {totalGabus} G
             </span>
           </div>
@@ -268,26 +356,26 @@ export default function AdminDashboard() {
             <span className="text-xs font-bold text-slate-500 uppercase">
               Kapal Pengangkut Aktif
             </span>
-            <span className="text-2xl font-black font-mono-numbers text-emerald-600 block mt-1">
+            <span className="text-2xl font-black font-mono-numbers text-sky-600 block mt-1">
               {trips.filter((t) => t.is_tracking_active).length} Kapal
             </span>
           </div>
-          <div className="p-3 bg-emerald-50 rounded-xl text-emerald-600">
-            <Navigation className="w-6 h-6" />
+          <div className="p-3 bg-sky-50 rounded-xl text-sky-600">
+            <Ship className="w-6 h-6" />
           </div>
         </div>
 
         <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center justify-between">
           <div>
             <span className="text-xs font-bold text-slate-500 uppercase">
-              Pesanan Butuh Penugasan
+              Pesanan Nelayan
             </span>
-            <span className="text-2xl font-black font-mono-numbers text-sky-600 block mt-1">
+            <span className="text-2xl font-black font-mono-numbers text-teal-600 block mt-1">
               {pendingRequests} Tiket
             </span>
           </div>
-          <div className="p-3 bg-sky-50 rounded-xl text-sky-600">
-            <Snowflake className="w-6 h-6" />
+          <div className="p-3 bg-teal-50 rounded-xl text-teal-600">
+            <NotepadText className="w-6 h-6" />
           </div>
         </div>
       </div>
@@ -302,8 +390,7 @@ export default function AdminDashboard() {
               : "border-transparent text-slate-500 hover:text-slate-900"
           }`}
         >
-          <Package className="w-4 h-4 text-amber-500" />
-          <span>Seluruh Laporan Muatan ({trips.length})</span>
+          <span> Laporan Muatan ({trips.length})</span>
         </button>
 
         <button
@@ -314,8 +401,20 @@ export default function AdminDashboard() {
               : "border-transparent text-slate-500 hover:text-slate-900"
           }`}
         >
-          <Snowflake className="w-4 h-4 text-sky-500" />
-          <span>Dispatcher Penugasan Logistik ({requests.length})</span>
+          <span> Penugasan Logistik ({requests.length})</span>
+        </button>
+        <button
+          onClick={() => setActiveTab("tracking")}
+          className={`pb-3 text-sm font-extrabold flex items-center gap-2 border-b-2 transition-all ${
+            activeTab === "tracking"
+              ? "border-[#0A2E4D] text-slate-900"
+              : "border-transparent text-slate-500 hover:text-slate-900"
+          }`}
+        >
+          <span>
+            Tracking Pengiriman (
+            {trips.filter((t) => t.is_tracking_active).length})
+          </span>
         </button>
       </div>
 
@@ -350,13 +449,14 @@ export default function AdminDashboard() {
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <span className="text-xs font-bold text-sky-600 uppercase">
-                      📍 Area {req.lokasi_tujuan}
+                      Area {req.lokasi_tujuan}
                     </span>
                     <h4 className="text-base font-extrabold text-slate-900 mt-0.5">
                       {req.nelayan?.nama_kapal || "Kapal Nelayan"}
                     </h4>
                     <p className="text-xs text-slate-500">
-                      Juragan: {req.nelayan?.nama_juragan || "Nelayan"} • WA: {req.nelayan?.no_whatsapp}
+                      Juragan: {req.nelayan?.nama_juragan || "Nelayan"} • WA:{" "}
+                      {req.nelayan?.no_whatsapp}
                     </p>
                   </div>
 
@@ -365,23 +465,25 @@ export default function AdminDashboard() {
                       req.status === "MENUNGGU_ADMIN"
                         ? "bg-amber-50 text-amber-700 border border-amber-200"
                         : req.status === "DITUGASKAN_KE_PENGANGKUT"
-                        ? "bg-sky-50 text-sky-700 border border-sky-200"
-                        : "bg-emerald-50 text-emerald-700 border border-emerald-200"
+                          ? "bg-sky-50 text-sky-700 border border-sky-200"
+                          : "bg-emerald-50 text-emerald-700 border border-emerald-200"
                     }`}
                   >
                     {req.status === "MENUNGGU_ADMIN"
                       ? "⏳ Butuh Ditugaskan"
                       : req.status === "DITUGASKAN_KE_PENGANGKUT"
-                      ? "🚢 Sedang Dibawa"
-                      : "✅ Selesai"}
+                        ? "Sedang Dibawa"
+                        : "Selesai"}
                   </span>
                 </div>
 
                 <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs">
                   <span className="font-bold text-slate-700 block mb-1">
-                    📦 Kebutuhan yang Diminta:
+                    Kebutuhan yang Diminta:
                   </span>
-                  <p className="text-slate-800 font-semibold">{req.rincian_barang}</p>
+                  <p className="text-slate-800 font-semibold">
+                    {req.rincian_barang}
+                  </p>
                 </div>
 
                 {/* Dispatcher Actions */}
@@ -440,6 +542,17 @@ export default function AdminDashboard() {
         </div>
       )}
 
+      {/* Tab 3: Live Tracking Map */}
+      {activeTab === "tracking" && (
+        <div className="space-y-4">
+          <LiveTrackingMap
+            trips={trips}
+            onRefresh={loadData}
+            isLoading={isLoading}
+          />
+        </div>
+      )}
+
       {/* Manifest Modal */}
       <ManifestFormModal
         isOpen={isModalOpen}
@@ -451,6 +564,7 @@ export default function AdminDashboard() {
         initialTrip={editingTrip}
         registeredNelayan={fishermen}
         currentTransporter={transporters[0] || currentUser}
+        availableTransporters={transporters}
       />
 
       {/* Chat Drawer */}

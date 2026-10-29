@@ -98,8 +98,18 @@ export default function Navbar() {
     return null;
   }
 
-  // Khusus Navbar di Dashboard Nelayan
-  if (pathname.startsWith("/dashboard/nelayan")) {
+  // Khusus Navbar di Dashboard (Nelayan, Admin, & Pengangkut)
+  if (
+    pathname.startsWith("/dashboard/nelayan") ||
+    pathname.startsWith("/dashboard/admin") ||
+    pathname.startsWith("/dashboard/pengangkut")
+  ) {
+    const dashboardTitle = pathname.startsWith("/dashboard/admin")
+      ? "Dashboard Admin"
+      : pathname.startsWith("/dashboard/pengangkut")
+        ? "Dashboard Pengangkut"
+        : "Dashboard Nelayan";
+
     return (
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md text-slate-800 border-b border-slate-200/80 shadow-[0_1px_3px_0_rgba(0,0,0,0.03)]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -128,15 +138,25 @@ export default function Navbar() {
               </Link>
             </div>
 
-            {/* Tulisan Dashboard Nelayan di Tengah */}
+            {/* Tulisan Dashboard di Tengah */}
             <div className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center pointer-events-none">
               <span className="text-sm sm:text-base md:text-lg font-black text-slate-900 tracking-tight whitespace-nowrap">
-                Dashboard Nelayan
+                {dashboardTitle}
               </span>
             </div>
 
-            {/* Tombol Logout di Kanan */}
-            <div className="flex items-center">
+            {/* Identitas & Tombol Logout di Kanan */}
+            <div className="flex items-center gap-2 sm:gap-3">
+              {user && (
+                <div className="hidden md:flex flex-col text-right">
+                  <span className="text-xs font-bold text-slate-800 truncate max-w-[150px]">
+                    {user.nama_kapal || "Petugas TPI"}
+                  </span>
+                  <span className="text-[10px] text-slate-500">
+                    {user.nama_juragan || user.username}
+                  </span>
+                </div>
+              )}
               <button
                 onClick={handleLogout}
                 title="Keluar Akun"
