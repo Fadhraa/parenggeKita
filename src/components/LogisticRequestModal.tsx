@@ -67,7 +67,8 @@ export default function LogisticRequestModal({
       const parts: string[] = [];
       if (esBalok > 0) parts.push(`Es Balok: ${esBalok} Batang`);
       if (berasKarung > 0) parts.push(`Beras: ${berasKarung} Karung`);
-      if (bbmJerigen > 0) parts.push(`BBM (${bbmJenis}): ${bbmJerigen} Jerigen`);
+      if (bbmJerigen > 0)
+        parts.push(`BBM (${bbmJenis}): ${bbmJerigen} Jerigen`);
       if (airGalon > 0) parts.push(`Air Bersih: ${airGalon} Galon`);
       if (isCustomActive && kebutuhanLainnya.trim()) {
         parts.push(`Lainnya: ${kebutuhanLainnya.trim()}`);
@@ -118,13 +119,10 @@ export default function LogisticRequestModal({
       />
 
       {/* Modal Dialog Card terisolasi dengan transform-gpu */}
-      <div className="relative z-10 bg-white w-full max-w-lg rounded-2xl shadow-xl border border-slate-200 overflow-hidden flex flex-col max-h-[90vh] transform-gpu">
+      <div className="relative z-10 bg-white w-full max-w-lg rounded-2xl shadow-xl  overflow-hidden flex flex-col max-h-[90vh] transform-gpu">
         {/* Header */}
-        <div className="bg-sky-600 text-white px-5 sm:px-6 py-3.5 sm:py-4 flex items-center justify-between border-b border-sky-700 shrink-0">
+        <div className="bg-primary text-white px-5 sm:px-6 py-3.5 sm:py-4 flex items-center justify-between ">
           <div className="flex items-center gap-2.5">
-            <div className="w-9 h-9 rounded-xl bg-white/20 flex items-center justify-center">
-              <Snowflake className="w-5 h-5 text-sky-100" />
-            </div>
             <div>
               <h3 className="font-extrabold text-base sm:text-lg text-white">
                 Pesan Kebutuhan Pokok (Logistik)
@@ -414,7 +412,7 @@ export default function LogisticRequestModal({
             <button
               type="submit"
               disabled={isSubmitting}
-              className="px-6 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-white font-bold text-sm flex items-center gap-2 shadow-lg hover:shadow-sky-500/25 transition-all disabled:opacity-50"
+              className="px-6 py-2.5 rounded-xl bg-primary hover:bg-sky-600 text-white font-bold text-sm flex items-center gap-2 shadow-lg hover:shadow-sky-500/25 transition-all disabled:opacity-50"
             >
               <Send className="w-4 h-4" />
               {isSubmitting ? "Mengirim..." : "Kirim Request ke Admin"}
