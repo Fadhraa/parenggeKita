@@ -61,6 +61,7 @@ export interface LogisticRequest {
   pengangkut_id?: string | null;
   lokasi_tujuan: LokasiMuat;
   rincian_barang: string;
+  items_custom?: string[];
   status: LogisticStatus;
   created_at?: string;
   updated_at?: string;

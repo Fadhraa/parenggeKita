@@ -151,6 +151,7 @@ export const MOCK_LOGISTICS: LogisticRequest[] = [
     lokasi_tujuan: "Puma",
     rincian_barang:
       "Es Balok: 25 Batang | Beras: 2 Karung (50kg) | Catatan: Mohon diantar sebelum maghrib",
+    items_custom: [],
     status: "DITUGASKAN_KE_PENGANGKUT",
     created_at: new Date(Date.now() - 3 * 3600 * 1000).toISOString(),
     updated_at: new Date().toISOString(),

@@ -104,6 +104,7 @@ export default function NelayanDashboard() {
   const handleCreateRequest = async (requestData: {
     lokasi_tujuan: LokasiMuat;
     rincian_barang: string;
+    items_custom?: string[];
   }) => {
     const { data: newReq, error } = await supabase
       .from("logistic_requests")
@@ -112,6 +113,7 @@ export default function NelayanDashboard() {
           nelayan_id: currentUser.id,
           lokasi_tujuan: requestData.lokasi_tujuan,
           rincian_barang: requestData.rincian_barang,
+          items_custom: requestData.items_custom || [],
           status: "MENUNGGU_ADMIN",
         },
       ])
@@ -126,6 +128,7 @@ export default function NelayanDashboard() {
         nelayan_id: currentUser.id,
         lokasi_tujuan: requestData.lokasi_tujuan,
         rincian_barang: requestData.rincian_barang,
+        items_custom: requestData.items_custom || [],
         status: "MENUNGGU_ADMIN",
         created_at: new Date().toISOString(),
       };
@@ -166,12 +169,12 @@ export default function NelayanDashboard() {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-6">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 flex flex-col gap-6">
       {/* Header Banner */}
       <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-md border border-slate-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
           <div className="w-14 h-14 rounded-2xl bg-sky-500 text-white flex items-center justify-center shadow-lg">
-            <Anchor className="w-8 h-8 text-white" />
+            <img src="/assets/Kapal/Kapal_nelayan_1.png" alt="" />
           </div>
           <div>
             <div className="flex items-center gap-2">
@@ -208,23 +211,22 @@ export default function NelayanDashboard() {
             {carriedFishTrips.map(({ trip, jumlahGabus }, idx) => (
               <div
                 key={idx}
-                className="bg-emerald-50 border-2 border-emerald-300 rounded-2xl p-4 sm:p-5 flex items-start gap-4 shadow-sm"
+                className="bg-white rounded-2xl p-5 sm:p-6 flex items-start gap-4 shadow-sm hover:shadow-md transition-shadow"
               >
-                <div className="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center shrink-0">
-                  <Package className="w-5 h-5" />
+                <div className="w-11 h-11 rounded-2xl bg-orange-50 text-orange-500 flex items-center justify-center shrink-0">
+                  <Package className="w-6 h-6 text-orange-500" />
                 </div>
                 <div className="space-y-1">
-                  <span className="text-xs font-bold text-emerald-800 uppercase">
+                  <span className="text-xs font-extrabold text-orange-600 uppercase tracking-wider block">
                     Ikan Anda Sedang OTW ke TPI
                   </span>
-                  <h4 className="text-base font-extrabold text-emerald-950">
-                    Muatan: {jumlahGabus} Gabus di Kapal{" "}
-                    {trip.pengangkut?.nama_kapal}
+                  <h4 className="text-base sm:text-lg font-extrabold text-slate-900">
+                    Muatan:{" "}
+                    <span className="text-orange-600 font-mono-numbers font-black">
+                      {jumlahGabus} Gabus
+                    </span>{" "}
+                    di Kapal {trip.pengangkut?.nama_kapal}
                   </h4>
-                  <p className="text-xs text-emerald-800">
-                    👨‍✈️ Juragan: {trip.pengangkut?.nama_juragan} • Jam OTW:{" "}
-                    {trip.jam_otw} {trip.zona_waktu}
-                  </p>
                 </div>
               </div>
             ))}

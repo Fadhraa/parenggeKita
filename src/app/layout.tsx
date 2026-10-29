@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Plus_Jakarta_Sans, JetBrains_Mono } from "next/font/google";
-import "leaflet/dist/leaflet.css";
 import "./globals.css";
+import "leaflet/dist/leaflet.css";
 import Navbar from "@/components/Navbar";
 import BottomNav from "@/components/BottomNav";
 import WhatsAppSupportFAB from "@/components/WhatsAppSupportFAB";

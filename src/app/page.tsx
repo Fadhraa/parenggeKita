@@ -86,8 +86,9 @@ export default function HomePage() {
   }, [trips]);
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-8 sm:space-y-12">
-      {/* Hero Section */}
+    <div className="flex flex-col min-h-full">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-8 sm:space-y-12 flex-1 w-full">
+        {/* Hero Section */}
       <section className="relative overflow-hidden rounded-3xl bg-white border border-slate-200/80 p-6 sm:p-10 lg:p-12 shadow-[0_4px_25px_-5px_rgba(15,23,42,0.04),0_1px_3px_0_rgba(15,23,42,0.02)]">
         {/* Soft Decorative Ambient Blue Glows */}
         <div className="absolute -top-24 -right-24 w-96 h-96 bg-gradient-to-br from-sky-100/60 via-blue-50/30 to-transparent rounded-full blur-3xl pointer-events-none" />
@@ -231,6 +232,14 @@ export default function HomePage() {
           </div>
         )}
       </section>
+      </div>
+
+      {/* Footer Landing Page */}
+      <footer className="w-full border-t border-slate-200 bg-white py-6 text-center">
+        <p className="text-xs sm:text-sm font-medium text-slate-500">
+          &copy; {new Date().getFullYear()} Parengge Kita
+        </p>
+      </footer>
     </div>
   );
 }
