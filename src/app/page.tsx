@@ -89,149 +89,149 @@ export default function HomePage() {
     <div className="flex flex-col min-h-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-8 sm:space-y-12 flex-1 w-full">
         {/* Hero Section */}
-      <section className="relative overflow-hidden rounded-3xl bg-white border border-slate-200/80 p-6 sm:p-10 lg:p-12 shadow-[0_4px_25px_-5px_rgba(15,23,42,0.04),0_1px_3px_0_rgba(15,23,42,0.02)]">
-        {/* Soft Decorative Ambient Blue Glows */}
-        <div className="absolute -top-24 -right-24 w-96 h-96 bg-gradient-to-br from-sky-100/60 via-blue-50/30 to-transparent rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-gradient-to-tr from-sky-50/50 to-transparent rounded-full blur-2xl pointer-events-none" />
+        <section className="relative overflow-hidden rounded-3xl bg-white border border-slate-200/80 p-6 sm:p-10 lg:p-12 shadow-[0_4px_25px_-5px_rgba(15,23,42,0.04),0_1px_3px_0_rgba(15,23,42,0.02)]">
+          {/* Soft Decorative Ambient Blue Glows */}
+          <div className="absolute -top-24 -right-24 w-96 h-96 bg-gradient-to-br from-sky-100/60 via-blue-50/30 to-transparent rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-gradient-to-tr from-sky-50/50 to-transparent rounded-full blur-2xl pointer-events-none" />
 
-        <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-6 sm:gap-8 lg:gap-12">
-          {/* Left Column: Heading, Description & Metrics (Mobile: Below ship, Desktop: Left) */}
-          <div className="order-2 lg:order-1 flex-1 space-y-4 sm:space-y-5 max-w-2xl text-center lg:text-left">
-            <h1 className="text-xl sm:text-4xl lg:text-[44px] font-black tracking-tight leading-[1.18] text-slate-900">
-              Transparansi Rantai Pasok{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-sky-700 to-sky-600">
-                Hasil Tangkapan
-              </span>{" "}
-              & Logistik Nelayan
-            </h1>
+          <div className="relative z-10 flex flex-col lg:flex-row items-center justify-between gap-6 sm:gap-8 lg:gap-12">
+            {/* Left Column: Heading, Description & Metrics (Mobile: Below ship, Desktop: Left) */}
+            <div className="order-2 lg:order-1 flex-1 space-y-4 sm:space-y-5 max-w-2xl text-center lg:text-left">
+              <h1 className="text-xl sm:text-4xl lg:text-[44px] font-black tracking-tight leading-[1.18] text-slate-900">
+                Transparansi Rantai Pasok{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary via-sky-700 to-sky-600">
+                  Hasil Tangkapan
+                </span>{" "}
+                & Logistik Nelayan
+              </h1>
 
-            <p className="text-xs sm:text-base text-slate-600 leading-relaxed max-w-xl">
-              Menghubungkan nelayan penangkap ikan di perairan{" "}
-              <strong className="text-slate-900 font-semibold">
-                Puma & Kalmas
-              </strong>{" "}
-              dengan kapal pengangkut menuju{" "}
-              <strong className="text-slate-900 font-semibold">
-                TPI Galesong Utara
-              </strong>
-              , dilengkapi pelacakan lokasi kapal real-time serta pemesanan
-              kebutuhan pokok es balok dari darat ke laut.
-            </p>
+              <p className="text-xs sm:text-base text-slate-600 leading-relaxed max-w-xl">
+                Menghubungkan nelayan penangkap ikan di perairan{" "}
+                <strong className="text-slate-900 font-semibold">
+                  Puma & Kalmas
+                </strong>{" "}
+                dengan kapal pengangkut menuju{" "}
+                <strong className="text-slate-900 font-semibold">
+                  TPI Galesong Utara
+                </strong>
+                , dilengkapi pelacakan lokasi kapal real-time serta pemesanan
+                kebutuhan pokok es balok dari darat ke laut.
+              </p>
 
-            {/* Quick Metrics Bar */}
-            <div className="grid grid-cols-2 gap-3.5 pt-2 max-w-md">
-              <div className="bg-slate-50/90 hover:bg-white rounded-2xl p-4 border border-slate-200/80 hover:border-sky-300 shadow-sm transition-all group flex flex-col items-center justify-between text-center">
-                <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider min-h-[32px] flex items-center justify-center text-center mb-1">
-                  Total Muatan Masuk
-                </span>
-                <div className="flex items-baseline justify-center gap-1.5 mt-auto">
-                  <span className="text-2xl sm:text-3xl font-black font-mono-numbers text-slate-900">
-                    {totalGabusHariIni}
+              {/* Quick Metrics Bar */}
+              <div className="grid grid-cols-2 gap-3.5 pt-2 max-w-md">
+                <div className="bg-slate-50/90 hover:bg-white rounded-2xl p-4 border border-slate-200/80 hover:border-sky-300 shadow-sm transition-all group flex flex-col items-center justify-between text-center">
+                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider min-h-[32px] flex items-center justify-center text-center mb-1">
+                    Total Muatan Masuk
                   </span>
-                  <span className="text-xs font-bold text-sky-600 font-sans tracking-wide">
-                    GABUS
+                  <div className="flex items-baseline justify-center gap-1.5 mt-auto">
+                    <span className="text-2xl sm:text-3xl font-black font-mono-numbers text-slate-900">
+                      {totalGabusHariIni}
+                    </span>
+                    <span className="text-xs font-bold text-amber-600 font-sans tracking-wide">
+                      GABUS
+                    </span>
+                  </div>
+                </div>
+
+                <div className="bg-slate-50/90 hover:bg-white rounded-2xl p-4 border border-slate-200/80 hover:border-sky-300 shadow-sm transition-all group flex flex-col items-center justify-between text-center">
+                  <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider min-h-[32px] flex items-center justify-center text-center mb-1">
+                    Total Kapal OTW ke TPI
                   </span>
+                  <div className="flex items-baseline justify-center gap-1.5 mt-auto">
+                    <span className="text-2xl sm:text-3xl font-black font-mono-numbers text-slate-900">
+                      {totalKapalAktif}
+                    </span>
+                    <span className="text-xs font-bold text-sky-600 font-sans tracking-wide">
+                      KAPAL
+                    </span>
+                  </div>
                 </div>
               </div>
+            </div>
 
-              <div className="bg-slate-50/90 hover:bg-white rounded-2xl p-4 border border-slate-200/80 hover:border-sky-300 shadow-sm transition-all group flex flex-col items-center justify-between text-center">
-                <span className="text-[11px] font-bold text-slate-500 uppercase tracking-wider min-h-[32px] flex items-center justify-center text-center mb-1">
-                  Total Kapal OTW ke TPI
-                </span>
-                <div className="flex items-baseline justify-center gap-1.5 mt-auto">
-                  <span className="text-2xl sm:text-3xl font-black font-mono-numbers text-slate-900">
-                    {totalKapalAktif}
-                  </span>
-                  <span className="text-xs font-bold text-emerald-600 font-sans tracking-wide">
-                    KAPAL
-                  </span>
-                </div>
+            {/* Right Column: Ship Illustration (Mobile: On top, Desktop: Right) */}
+            <div className="order-1 lg:order-2 relative flex-shrink-0 flex items-center justify-center w-full lg:w-auto">
+              <div className="absolute w-44 h-44 sm:w-64 sm:h-64 rounded-full bg-gradient-to-tr from-sky-100/70 to-blue-50/40 blur-2xl -z-10" />
+              <div className="relative group">
+                <img
+                  src="/assets/Kapal/Kapal_3.png"
+                  alt="Ilustrasi Kapal Nelayan Parengge"
+                  className="w-44 h-44 sm:w-60 sm:h-60 lg:w-96 lg:h-96 object-contain drop-shadow-md transition-transform duration-300 group-hover:scale-105"
+                />
               </div>
             </div>
           </div>
+        </section>
 
-          {/* Right Column: Ship Illustration (Mobile: On top, Desktop: Right) */}
-          <div className="order-1 lg:order-2 relative flex-shrink-0 flex items-center justify-center w-full lg:w-auto">
-            <div className="absolute w-44 h-44 sm:w-64 sm:h-64 rounded-full bg-gradient-to-tr from-sky-100/70 to-blue-50/40 blur-2xl -z-10" />
-            <div className="relative group">
-              <img
-                src="/assets/Kapal/Kapal_3.png"
-                alt="Ilustrasi Kapal Nelayan Parengge"
-                className="w-44 h-44 sm:w-60 sm:h-60 lg:w-96 lg:h-96 object-contain drop-shadow-md transition-transform duration-300 group-hover:scale-105"
-              />
+        {/* 1. Live Tracking Map Section */}
+        <section className="space-y-3">
+          <LiveTrackingMap
+            trips={trips}
+            onRefresh={fetchTrips}
+            isLoading={isLoading}
+          />
+        </section>
+
+        {/* 2. Rekapitulasi Muatan Gabus Section */}
+        <section id="rekap-muatan" className="space-y-6 pt-2">
+          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="p-2 rounded-xl bg-sky-50 text-sky-600">
+                  <Anchor className="w-5 h-5 text-sky-600" />
+                </span>
+                <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
+                  Rekapitulasi Muatan Gabus Komunitas Nelayan
+                </h2>
+              </div>
+              <p className="text-xs sm:text-sm text-slate-600 mt-1">
+                Daftar muatan ikan kapal pengangkut dari wilayah Puma & Kalmas
+                (standar laporan grup nelayan).
+              </p>
+            </div>
+
+            {/* Location Tabs Filter */}
+            <div className="flex items-center bg-slate-100 p-1 rounded-2xl w-full sm:w-auto">
+              {(["Semua", "Puma", "Kalmas"] as const).map((lok) => (
+                <button
+                  key={lok}
+                  onClick={() => setSelectedLokasi(lok)}
+                  className={`flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${
+                    selectedLokasi === lok
+                      ? "bg-[#0A2E4D] text-white shadow-md"
+                      : "text-slate-600 hover:text-slate-900"
+                  }`}
+                >
+                  {lok === "Semua" ? "Semua Lokasi" : `Area ${lok}`}
+                </button>
+              ))}
             </div>
           </div>
-        </div>
-      </section>
 
-      {/* 1. Live Tracking Map Section */}
-      <section className="space-y-3">
-        <LiveTrackingMap
-          trips={trips}
-          onRefresh={fetchTrips}
-          isLoading={isLoading}
-        />
-      </section>
-
-      {/* 2. Rekapitulasi Muatan Gabus Section */}
-      <section id="rekap-muatan" className="space-y-6 pt-2">
-        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
-          <div>
-            <div className="flex items-center gap-2">
-              <span className="p-2 rounded-xl bg-sky-50 text-sky-600">
-                <Anchor className="w-5 h-5 text-sky-600" />
-              </span>
-              <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
-                Rekapitulasi Muatan Gabus Komunitas Nelayan
-              </h2>
+          {/* Manifest Cards Grid */}
+          {filteredTrips.length === 0 ? (
+            <div className="bg-white rounded-2xl p-12 text-center border border-slate-200 space-y-3">
+              <Package className="w-12 h-12 text-slate-300 mx-auto" />
+              <h4 className="text-base font-bold text-slate-800">
+                Tidak ada data muatan gabus yang cocok
+              </h4>
+              <p className="text-xs text-slate-500 max-w-md mx-auto">
+                Tidak ditemukan laporan kapal untuk filter area yang dipilih.
+              </p>
             </div>
-            <p className="text-xs sm:text-sm text-slate-600 mt-1">
-              Daftar muatan ikan kapal pengangkut dari wilayah Puma & Kalmas
-              (standar laporan grup nelayan).
-            </p>
-          </div>
-
-          {/* Location Tabs Filter */}
-          <div className="flex items-center bg-slate-100 p-1 rounded-2xl w-full sm:w-auto">
-            {(["Semua", "Puma", "Kalmas"] as const).map((lok) => (
-              <button
-                key={lok}
-                onClick={() => setSelectedLokasi(lok)}
-                className={`flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition-all ${
-                  selectedLokasi === lok
-                    ? "bg-[#0A2E4D] text-white shadow-md"
-                    : "text-slate-600 hover:text-slate-900"
-                }`}
-              >
-                {lok === "Semua" ? "Semua Lokasi" : `Area ${lok}`}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Manifest Cards Grid */}
-        {filteredTrips.length === 0 ? (
-          <div className="bg-white rounded-2xl p-12 text-center border border-slate-200 space-y-3">
-            <Package className="w-12 h-12 text-slate-300 mx-auto" />
-            <h4 className="text-base font-bold text-slate-800">
-              Tidak ada data muatan gabus yang cocok
-            </h4>
-            <p className="text-xs text-slate-500 max-w-md mx-auto">
-              Tidak ditemukan laporan kapal untuk filter area yang dipilih.
-            </p>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredTrips.map((trip) => (
-              <ManifestCard
-                key={trip.id}
-                trip={trip}
-                currentUser={currentUser}
-              />
-            ))}
-          </div>
-        )}
-      </section>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {filteredTrips.map((trip) => (
+                <ManifestCard
+                  key={trip.id}
+                  trip={trip}
+                  currentUser={currentUser}
+                />
+              ))}
+            </div>
+          )}
+        </section>
       </div>
 
       {/* Footer Landing Page */}

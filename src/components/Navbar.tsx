@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
   Anchor,
+  Home,
   LogOut,
   Navigation,
 } from "lucide-react";
@@ -204,13 +205,14 @@ export default function Navbar() {
           <nav className="hidden md:flex items-center gap-1 lg:gap-2">
             <Link
               href="/"
-              className={`text-sm font-medium px-3.5 py-1.5 rounded-lg transition-colors ${
+              className={`group text-sm font-medium px-3.5 py-1.5 rounded-lg transition-colors flex items-center gap-1.5 ${
                 pathname === "/"
                   ? "text-primary font-bold bg-slate-100/80"
                   : "text-slate-600 hover:text-primary hover:bg-slate-50"
               }`}
             >
-              Beranda
+              <Home className="w-4 h-4 text-sky-500 group-hover:text-primary transition-colors" />
+              <span>Beranda</span>
             </Link>
             <Link
               href="/#peta-tracking"
@@ -227,28 +229,6 @@ export default function Navbar() {
               <span>Rekap Muatan Gabus</span>
             </Link>
           </nav>
-
-          {/* User Auth: Hanya tampil jika sudah login (Logout & Identitas Akun) */}
-          {user ? (
-            <div className="absolute right-0 md:static flex items-center gap-2 sm:gap-3">
-              <div className="hidden lg:flex flex-col text-right">
-                <span className="text-xs font-bold text-slate-800 truncate max-w-[130px]">
-                  {user.nama_kapal}
-                </span>
-                <span className="text-[10px] text-slate-500">
-                  {user.nama_juragan || user.username}
-                </span>
-              </div>
-
-              <button
-                onClick={handleLogout}
-                title="Keluar Akun"
-                className="p-2 rounded-xl text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
-              >
-                <LogOut className="w-4 h-4" />
-              </button>
-            </div>
-          ) : null}
         </div>
       </div>
     </header>
