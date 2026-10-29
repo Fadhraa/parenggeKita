@@ -55,3 +55,36 @@ export function generateWhatsAppManifestText(trip: Trip): string {
 
   return text;
 }
+
+// Koordinat Dermaga TPI Galesong Utara
+export const TPI_GALESONG_COORDS = {
+  lat: -5.3216,
+  lng: 119.3625,
+};
+
+// Radius Geofence otomatis sandar di dermaga (dalam meter)
+export const DOCKING_GEOFENCE_RADIUS_METERS = 350;
+
+// Rumus Haversine untuk menghitung jarak antara 2 koordinat bumi (dalam meter)
+export function calculateDistanceInMeters(
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number,
+): number {
+  const R = 6371e3; // Radius bumi dalam meter
+  const phi1 = (lat1 * Math.PI) / 180;
+  const phi2 = (lat2 * Math.PI) / 180;
+  const deltaPhi = ((lat2 - lat1) * Math.PI) / 180;
+  const deltaLambda = ((lon2 - lon1) * Math.PI) / 180;
+
+  const a =
+    Math.sin(deltaPhi / 2) * Math.sin(deltaPhi / 2) +
+    Math.cos(phi1) *
+      Math.cos(phi2) *
+      Math.sin(deltaLambda / 2) *
+      Math.sin(deltaLambda / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return Math.round(R * c);
+}

@@ -23,7 +23,7 @@ const LiveTrackingMap = dynamic(() => import("@/components/LiveTrackingMap"), {
 });
 
 export default function HomePage() {
-  const [trips, setTrips] = useState<Trip[]>(MOCK_TRIPS);
+  const [trips, setTrips] = useState<Trip[]>([]);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [selectedLokasi, setSelectedLokasi] = useState<"Semua" | LokasiMuat>(
     "Semua",
@@ -31,8 +31,8 @@ export default function HomePage() {
   const [isLoading, setIsLoading] = useState(true);
 
   // Fetch trips from Supabase (with fallback)
-  const fetchTrips = async () => {
-    setIsLoading(true);
+  const fetchTrips = async (showLoading = false) => {
+    if (showLoading) setIsLoading(true);
     try {
       const { data, error } = await supabase
         .from("trips")
@@ -45,7 +45,7 @@ export default function HomePage() {
         )
         .order("tanggal_berangkat", { ascending: false });
 
-      if (!error && data && data.length > 0) {
+      if (!error && data) {
         setTrips(data as Trip[]);
       } else {
         setTrips(MOCK_TRIPS);
@@ -60,9 +60,9 @@ export default function HomePage() {
 
   useEffect(() => {
     setCurrentUser(getSessionUser());
-    fetchTrips();
+    fetchTrips(true);
 
-    const interval = setInterval(fetchTrips, 20000);
+    const interval = setInterval(() => fetchTrips(false), 20000);
     return () => clearInterval(interval);
   }, []);
 
@@ -126,7 +126,11 @@ export default function HomePage() {
                   </span>
                   <div className="flex items-baseline justify-center gap-1.5 mt-auto">
                     <span className="text-2xl sm:text-3xl font-black font-mono-numbers text-slate-900">
-                      {totalGabusHariIni}
+                      {isLoading ? (
+                        <span className="inline-block w-12 h-7 bg-slate-200/80 rounded animate-pulse" />
+                      ) : (
+                        totalGabusHariIni
+                      )}
                     </span>
                     <span className="text-xs font-bold text-amber-600 font-sans tracking-wide">
                       GABUS
@@ -140,7 +144,11 @@ export default function HomePage() {
                   </span>
                   <div className="flex items-baseline justify-center gap-1.5 mt-auto">
                     <span className="text-2xl sm:text-3xl font-black font-mono-numbers text-slate-900">
-                      {totalKapalAktif}
+                      {isLoading ? (
+                        <span className="inline-block w-8 h-7 bg-slate-200/80 rounded animate-pulse" />
+                      ) : (
+                        totalKapalAktif
+                      )}
                     </span>
                     <span className="text-xs font-bold text-sky-600 font-sans tracking-wide">
                       KAPAL
@@ -210,7 +218,20 @@ export default function HomePage() {
           </div>
 
           {/* Manifest Cards Grid */}
-          {filteredTrips.length === 0 ? (
+          {isLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {[1, 2, 3].map((i) => (
+                <div
+                  key={i}
+                  className="bg-white rounded-2xl h-56 border border-slate-200 animate-pulse p-5 space-y-3"
+                >
+                  <div className="h-5 bg-slate-200 rounded w-1/3"></div>
+                  <div className="h-4 bg-slate-100 rounded w-1/2"></div>
+                  <div className="h-24 bg-slate-100 rounded-xl"></div>
+                </div>
+              ))}
+            </div>
+          ) : filteredTrips.length === 0 ? (
             <div className="bg-white rounded-2xl p-12 text-center border border-slate-200 space-y-3">
               <Package className="w-12 h-12 text-slate-300 mx-auto" />
               <h4 className="text-base font-bold text-slate-800">

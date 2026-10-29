@@ -83,7 +83,13 @@ export default function LiveTrackingMap({
     // 1. TPI Galesong Harbor Marker
     const tpiIcon = L.divIcon({
       className: "custom-port-marker",
-      html: `<span>⚓</span>`,
+      html: `<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;">
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color:#ffffff;">
+      <circle cx="12" cy="5" r="3"></circle>
+      <line x1="12" y1="22" x2="12" y2="8"></line>
+      <path d="M5 12H2a10 10 0 0 0 20 0h-3"></path>
+    </svg>
+  </div>`,
       iconSize: [36, 36],
       iconAnchor: [18, 18],
       popupAnchor: [0, -18],
@@ -108,7 +114,15 @@ export default function LiveTrackingMap({
 
       const shipIcon = L.divIcon({
         className: "custom-ship-marker",
-        html: `<span>🚢</span>`,
+        html: `<div style="display:flex;align-items:center;justify-content:center;width:100%;height:100%;">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="color:#ffffff;">
+            <path d="M2 21c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1 .6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/>
+            <path d="M19.38 20A11.6 11.6 0 0 0 21 14l-9-4-9 4c0 2.9.94 5.34 2.81 7.76"/>
+            <path d="M19 13V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6"/>
+            <path d="M12 10v4"/>
+            <path d="M12 2v3"/>
+          </svg>
+        </div>`,
         iconSize: [38, 38],
         iconAnchor: [19, 19],
         popupAnchor: [0, -19],
@@ -129,7 +143,7 @@ export default function LiveTrackingMap({
               Area ${trip.lokasi}
             </span>
             <span style="color: #059669; font-weight: 700; font-size: 11px;">
-              ● OTW Jam ${trip.jam_otw}
+              OTW Jam ${trip.jam_otw}
             </span>
           </div>
           <h4 style="margin: 4px 0 2px; font-size: 15px; font-weight: 800; color: #0f172a;">
@@ -190,17 +204,54 @@ export default function LiveTrackingMap({
         <div ref={mapContainerRef} className="w-full h-full" />
 
         {/* Legend / Info Helper */}
-        <div className="absolute bottom-3 left-3 z-20 bg-white/95 backdrop-blur-sm border border-slate-200 rounded-xl p-2.5 shadow-md text-xs space-y-1.5 max-w-[200px] sm:max-w-none">
+        <div className="absolute bottom-3 left-3 z-20 bg-white/95 backdrop-blur-sm border border-slate-200 rounded-xl p-2.5 shadow-md text-xs space-y-2 max-w-[210px] sm:max-w-none">
           <div className="flex items-center gap-2 text-slate-800 font-medium">
-            <span className="text-base">🚢</span>
-            <span>Kapal Pengangkut OTW</span>
+            <span className="w-5 h-5 rounded-full bg-[#0A2E4D] border-2 border-[#0284C7] flex items-center justify-center shrink-0">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="11"
+                height="11"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                className="text-white"
+              >
+                <path d="M2 21c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1 .6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" />
+                <path d="M19.38 20A11.6 11.6 0 0 0 21 14l-9-4-9 4c0 2.9.94 5.34 2.81 7.76" />
+                <path d="M19 13V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6" />
+                <path d="M12 10v4" />
+                <path d="M12 2v3" />
+              </svg>
+            </span>
+            <span>Kapal Pengangkut</span>
           </div>
           <div className="flex items-center gap-2 text-slate-800 font-medium">
-            <span className="text-base">⚓</span>
+            <span className="w-5 h-5 rounded-full bg-[#059669] border-2 border-[#ECFDF5] flex items-center justify-center shrink-0">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="11"
+                height="11"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2.5"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                className="text-white"
+              >
+                <circle cx="12" cy="5" r="3"></circle>
+                <line x1="12" y1="22" x2="12" y2="8"></line>
+                <path d="M5 12H2a10 10 0 0 0 20 0h-3"></path>
+              </svg>
+            </span>
             <span>TPI Galesong Utara</span>
           </div>
-          <p className="text-[10px] text-slate-500 pt-1 border-t border-slate-200">
-            Klik marker kapal untuk melihat rincian muatan & jam OTW.
+          <p className="text-[10px] text-slate-500 pt-1.5 border-t border-slate-200">
+            Klik marker kapal untuk melihat rincian muatan & waktu
+            keberangkatan.
           </p>
         </div>
       </div>

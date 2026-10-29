@@ -10,7 +10,17 @@ import GeolocationTracker from "@/components/GeolocationTracker";
 import ManifestCard from "@/components/ManifestCard";
 import ManifestFormModal from "@/components/ManifestFormModal";
 import LogisticChatDrawer from "@/components/LogisticChatDrawer";
-import { Ship, Plus, Package, Snowflake, MessageCircle, CheckCircle2 } from "lucide-react";
+import {
+  Ship,
+  Plus,
+  Package,
+  Snowflake,
+  MessageCircle,
+  CheckCircle2,
+  Anchor,
+  Navigation,
+  RotateCcw,
+} from "lucide-react";
 
 export default function PengangkutDashboard() {
   const router = useRouter();
@@ -18,12 +28,15 @@ export default function PengangkutDashboard() {
   const [trips, setTrips] = useState<Trip[]>([]);
   const [logisticTasks, setLogisticTasks] = useState<LogisticRequest[]>([]);
   const [registeredNelayan, setRegisteredNelayan] = useState<User[]>([]);
-  const [activeTab, setActiveTab] = useState<"manifest" | "logistik">("manifest");
+  const [activeTab, setActiveTab] = useState<"manifest" | "logistik">(
+    "manifest",
+  );
 
   // Modals state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingTrip, setEditingTrip] = useState<Trip | null>(null);
-  const [selectedChatRequest, setSelectedChatRequest] = useState<LogisticRequest | null>(null);
+  const [selectedChatRequest, setSelectedChatRequest] =
+    useState<LogisticRequest | null>(null);
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -33,11 +46,13 @@ export default function PengangkutDashboard() {
     try {
       const { data: tripsData, error: tripsErr } = await supabase
         .from("trips")
-        .select(`
+        .select(
+          `
           *,
           pengangkut:users!trips_pengangkut_id_fkey(*),
           manifests:trip_manifests(*)
-        `)
+        `,
+        )
         .eq("pengangkut_id", user.id)
         .order("tanggal_berangkat", { ascending: false });
 
@@ -50,7 +65,8 @@ export default function PengangkutDashboard() {
 
       const { data: logData, error: logErr } = await supabase
         .from("logistic_requests")
-        .select(`
+        .select(
+          `
           *,
           nelayan:users!logistic_requests_nelayan_id_fkey(*),
           pengangkut:users!logistic_requests_pengangkut_id_fkey(*),
@@ -58,7 +74,8 @@ export default function PengangkutDashboard() {
             *,
             sender:users!logistic_messages_sender_id_fkey(*)
           )
-        `)
+        `,
+        )
         .eq("pengangkut_id", user.id)
         .order("created_at", { ascending: false });
 
@@ -76,13 +93,17 @@ export default function PengangkutDashboard() {
       if (nelayanData && nelayanData.length > 0) {
         setRegisteredNelayan(nelayanData as User[]);
       } else {
-        setRegisteredNelayan(MOCK_USERS.filter((u) => u.role === "kapal_nelayan"));
+        setRegisteredNelayan(
+          MOCK_USERS.filter((u) => u.role === "kapal_nelayan"),
+        );
       }
     } catch (e) {
       console.warn("Using fallback mock", e);
       setTrips(MOCK_TRIPS.filter((t) => t.pengangkut_id === user.id));
       setLogisticTasks(MOCK_LOGISTICS);
-      setRegisteredNelayan(MOCK_USERS.filter((u) => u.role === "kapal_nelayan"));
+      setRegisteredNelayan(
+        MOCK_USERS.filter((u) => u.role === "kapal_nelayan"),
+      );
     } finally {
       setIsLoading(false);
     }
@@ -108,11 +129,18 @@ export default function PengangkutDashboard() {
 
   const handleSaveTrip = async (
     tripData: Partial<Trip>,
-    manifestRows: { nama_kapal_nelayan: string; jumlah_gabus: number; nelayan_id?: string | null }[]
+    manifestRows: {
+      nama_kapal_nelayan: string;
+      jumlah_gabus: number;
+      nelayan_id?: string | null;
+    }[],
   ) => {
     if (editingTrip) {
       await supabase.from("trips").update(tripData).eq("id", editingTrip.id);
-      await supabase.from("trip_manifests").delete().eq("trip_id", editingTrip.id);
+      await supabase
+        .from("trip_manifests")
+        .delete()
+        .eq("trip_id", editingTrip.id);
       const rows = manifestRows.map((r) => ({
         trip_id: editingTrip.id,
         nama_kapal_nelayan: r.nama_kapal_nelayan,
@@ -147,6 +175,31 @@ export default function PengangkutDashboard() {
     setTrips(trips.filter((t) => t.id !== tripId));
   };
 
+  const handleReactivateTrip = async (tripId: string) => {
+    if (!confirm("Aktifkan kembali pelacakan GPS untuk pelayaran ini?")) return;
+    try {
+      const nowIso = new Date().toISOString();
+      await supabase
+        .from("trips")
+        .update({
+          is_tracking_active: true,
+          updated_at: nowIso,
+          last_tracked_at: nowIso,
+        })
+        .eq("id", tripId);
+
+      setTrips((prev) =>
+        prev.map((t) =>
+          t.id === tripId
+            ? { ...t, is_tracking_active: true, last_tracked_at: nowIso }
+            : t,
+        ),
+      );
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   const handleSendMessage = async (requestId: string, text: string) => {
     const { data: newMsg, error } = await supabase
       .from("logistic_messages")
@@ -165,30 +218,37 @@ export default function PengangkutDashboard() {
         prev.map((t) =>
           t.id === requestId
             ? { ...t, messages: [...(t.messages || []), newMsg as any] }
-            : t
-        )
+            : t,
+        ),
       );
       if (selectedChatRequest && selectedChatRequest.id === requestId) {
         setSelectedChatRequest((prev) =>
-          prev ? { ...prev, messages: [...(prev.messages || []), newMsg as any] } : null
+          prev
+            ? { ...prev, messages: [...(prev.messages || []), newMsg as any] }
+            : null,
         );
       }
     }
   };
 
   const handleCompleteTask = async (taskId: string) => {
-    if (!confirm("Tandai pesanan logistik ini telah selesai diserahterimakan di laut?")) return;
+    if (
+      !confirm(
+        "Tandai pesanan logistik ini telah selesai diserahterimakan di laut?",
+      )
+    )
+      return;
     await supabase
       .from("logistic_requests")
       .update({ status: "SELESAI", updated_at: new Date().toISOString() })
       .eq("id", taskId);
     setLogisticTasks((prev) =>
-      prev.map((t) => (t.id === taskId ? { ...t, status: "SELESAI" } : t))
+      prev.map((t) => (t.id === taskId ? { ...t, status: "SELESAI" } : t)),
     );
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-6">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 flex flex-col gap-6">
       {/* Transporter Header Banner */}
       <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-md border border-slate-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
@@ -226,14 +286,59 @@ export default function PengangkutDashboard() {
         </button>
       </div>
 
-      {/* Geolocation Active Tracking Banner */}
-      {activeTripToday && (
+      {/* Geolocation Active Tracking Banner ATAU Banner Siaga Bersandar */}
+      {activeTripToday ? (
         <GeolocationTracker
           activeTrip={activeTripToday}
           onTripUpdated={(updated) => {
             setTrips(trips.map((t) => (t.id === updated.id ? updated : t)));
           }}
         />
+      ) : (
+        <div className="bg-gradient-to-r from-slate-900 via-[#0A2E4D] to-slate-900 text-white rounded-2xl p-4 sm:p-5 shadow-lg border border-slate-700 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span className="relative flex h-3 w-3">
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-slate-400"></span>
+              </span>
+              <h4 className="font-extrabold text-sm sm:text-base text-white flex items-center gap-2">
+                <Anchor className="w-4 h-4 text-sky-400" />
+                <span>Armada Sedang Bersandar di Dermaga TPI Galesong</span>
+              </h4>
+            </div>
+            <p className="text-xs text-slate-300">
+              Pelacakan GPS nonaktif (pelayaran selesai). Siapkan armada dan
+              klik tombol di samping saat kapal hendak bertolak berlayar kembali
+              ke laut.
+            </p>
+          </div>
+
+          <div className="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
+            {trips.length > 0 && (
+              <button
+                type="button"
+                onClick={() => handleReactivateTrip(trips[0].id)}
+                className="px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-slate-200 font-bold text-xs flex items-center gap-1.5 border border-white/20 transition-all"
+                title="Aktifkan kembali pelayaran terakhir jika tidak sengaja menekan tombol sandar"
+              >
+                <RotateCcw className="w-3.5 h-3.5 text-sky-400" />
+                <span>Aktifkan Kembali Trip Terakhir</span>
+              </button>
+            )}
+
+            <button
+              type="button"
+              onClick={() => {
+                setEditingTrip(null);
+                setIsModalOpen(true);
+              }}
+              className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs sm:text-sm flex items-center gap-2 shadow-lg shadow-emerald-950/40 transition-all"
+            >
+              <Navigation className="w-4 h-4" />
+              <span>Mulai Pelayaran Baru</span>
+            </button>
+          </div>
+        </div>
       )}
 
       {/* Navigation Tabs */}
@@ -246,7 +351,6 @@ export default function PengangkutDashboard() {
               : "border-transparent text-slate-500 hover:text-slate-900"
           }`}
         >
-          <Package className="w-4 h-4 text-amber-500" />
           <span>Rekap Muatan Ikan Saya ({trips.length})</span>
         </button>
 
@@ -258,7 +362,6 @@ export default function PengangkutDashboard() {
               : "border-transparent text-slate-500 hover:text-slate-900"
           }`}
         >
-          <Snowflake className="w-4 h-4 text-sky-500" />
           <span>Tugas Bawa Logistik ({logisticTasks.length})</span>
         </button>
       </div>
@@ -273,7 +376,8 @@ export default function PengangkutDashboard() {
                 Belum ada laporan keberangkatan kapal Anda
               </h4>
               <p className="text-xs text-slate-500 max-w-sm mx-auto">
-                Klik tombol "Buat Laporan Muatan Baru" di atas untuk mencatat daftar gabus nelayan yang Anda angkut hari ini.
+                Klik tombol "Buat Laporan Muatan Baru" di atas untuk mencatat
+                daftar gabus nelayan yang Anda angkut hari ini.
               </p>
             </div>
           ) : (
@@ -306,7 +410,9 @@ export default function PengangkutDashboard() {
                 Belum ada tugas bawa logistik dari Admin TPI
               </h4>
               <p className="text-xs text-slate-500 max-w-sm mx-auto">
-                Ketika ada pesanan es balok atau perbekalan dari nelayan di laut, Admin TPI akan menugaskannya ke kapal pengangkut Anda di sini.
+                Ketika ada pesanan es balok atau perbekalan dari nelayan di
+                laut, Admin TPI akan menugaskannya ke kapal pengangkut Anda di
+                sini.
               </p>
             </div>
           ) : (
@@ -319,13 +425,14 @@ export default function PengangkutDashboard() {
                   <div className="flex items-start justify-between gap-2">
                     <div>
                       <span className="text-xs font-bold text-sky-600 uppercase">
-                        📍 Area Pengantaran: {task.lokasi_tujuan}
+                        Area Pengantaran: {task.lokasi_tujuan}
                       </span>
                       <h4 className="text-base font-extrabold text-slate-900 mt-0.5">
                         Pemesan: {task.nelayan?.nama_kapal || "Kapal Nelayan"}
                       </h4>
                       <p className="text-xs text-slate-500">
-                        Juragan: {task.nelayan?.nama_juragan || "Nelayan"} • WA: {task.nelayan?.no_whatsapp}
+                        Juragan: {task.nelayan?.nama_juragan || "Nelayan"} • WA:{" "}
+                        {task.nelayan?.no_whatsapp}
                       </p>
                     </div>
 
@@ -336,15 +443,19 @@ export default function PengangkutDashboard() {
                           : "bg-sky-50 text-sky-700 border border-sky-200"
                       }`}
                     >
-                      {task.status === "SELESAI" ? "✅ Sudah Diserahkan" : "🚢 Dalam Muatan"}
+                      {task.status === "SELESAI"
+                        ? "Sudah Diserahkan"
+                        : "Dalam Muatan"}
                     </span>
                   </div>
 
                   <div className="p-3 rounded-xl bg-slate-50 border border-slate-200 text-xs">
                     <span className="font-bold text-slate-700 block mb-1">
-                      📦 Barang yang Dititipkan:
+                      Barang yang Dititipkan:
                     </span>
-                    <p className="text-slate-800 font-semibold">{task.rincian_barang}</p>
+                    <p className="text-slate-800 font-semibold">
+                      {task.rincian_barang}
+                    </p>
                   </div>
 
                   {/* Actions */}
@@ -357,7 +468,9 @@ export default function PengangkutDashboard() {
                       className="px-3.5 py-2 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 font-bold text-xs flex items-center gap-1.5 transition-colors border border-sky-200"
                     >
                       <MessageCircle className="w-3.5 h-3.5" />
-                      <span>Chat Titik Temu ({task.messages?.length || 0})</span>
+                      <span>
+                        Chat Titik Temu ({task.messages?.length || 0})
+                      </span>
                     </button>
 
                     {task.status !== "SELESAI" && (
