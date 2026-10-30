@@ -17,9 +17,7 @@ import {
   Snowflake,
   MessageCircle,
   CheckCircle2,
-  Anchor,
   Navigation,
-  RotateCcw,
 } from "lucide-react";
 
 export default function PengangkutDashboard() {
@@ -175,31 +173,6 @@ export default function PengangkutDashboard() {
     setTrips(trips.filter((t) => t.id !== tripId));
   };
 
-  const handleReactivateTrip = async (tripId: string) => {
-    if (!confirm("Aktifkan kembali pelacakan GPS untuk pelayaran ini?")) return;
-    try {
-      const nowIso = new Date().toISOString();
-      await supabase
-        .from("trips")
-        .update({
-          is_tracking_active: true,
-          updated_at: nowIso,
-          last_tracked_at: nowIso,
-        })
-        .eq("id", tripId);
-
-      setTrips((prev) =>
-        prev.map((t) =>
-          t.id === tripId
-            ? { ...t, is_tracking_active: true, last_tracked_at: nowIso }
-            : t,
-        ),
-      );
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
   const handleSendMessage = async (requestId: string, text: string) => {
     const { data: newMsg, error } = await supabase
       .from("logistic_messages")
@@ -298,11 +271,7 @@ export default function PengangkutDashboard() {
         <div className="bg-gradient-to-r from-slate-900 via-[#0A2E4D] to-slate-900 text-white rounded-2xl p-4 sm:p-5 shadow-lg border border-slate-700 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
-              <span className="relative flex h-3 w-3">
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-slate-400"></span>
-              </span>
               <h4 className="font-extrabold text-sm sm:text-base text-white flex items-center gap-2">
-                <Anchor className="w-4 h-4 text-sky-400" />
                 <span>Armada Sedang Bersandar di Dermaga TPI Galesong</span>
               </h4>
             </div>
@@ -314,18 +283,6 @@ export default function PengangkutDashboard() {
           </div>
 
           <div className="flex flex-wrap items-center gap-2.5 w-full md:w-auto">
-            {trips.length > 0 && (
-              <button
-                type="button"
-                onClick={() => handleReactivateTrip(trips[0].id)}
-                className="px-3.5 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-slate-200 font-bold text-xs flex items-center gap-1.5 border border-white/20 transition-all"
-                title="Aktifkan kembali pelayaran terakhir jika tidak sengaja menekan tombol sandar"
-              >
-                <RotateCcw className="w-3.5 h-3.5 text-sky-400" />
-                <span>Aktifkan Kembali Trip Terakhir</span>
-              </button>
-            )}
-
             <button
               type="button"
               onClick={() => {

@@ -255,17 +255,6 @@ export default function GeolocationTracker({
             <>
               <button
                 type="button"
-                onClick={handleSimulateMaritimeCoord}
-                disabled={isUpdating}
-                title="Perbarui koordinat simulasi rute laut untuk demo presentasi"
-                className="px-3 py-2 rounded-xl bg-white/10 hover:bg-white/20 text-slate-200 font-bold text-xs flex items-center gap-1.5 border border-white/20 transition-all disabled:opacity-50"
-              >
-                <Radio className="w-3.5 h-3.5 text-sky-400" />
-                <span>Simulasi Titik Laut</span>
-              </button>
-
-              <button
-                type="button"
                 onClick={handleSudahSandar}
                 disabled={isUpdating}
                 className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-extrabold text-xs sm:text-sm flex items-center gap-2 shadow-lg shadow-emerald-950/40 transition-all disabled:opacity-50"
