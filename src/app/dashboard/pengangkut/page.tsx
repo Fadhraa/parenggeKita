@@ -139,13 +139,15 @@ export default function PengangkutDashboard() {
         .from("trip_manifests")
         .delete()
         .eq("trip_id", editingTrip.id);
-      const rows = manifestRows.map((r) => ({
-        trip_id: editingTrip.id,
-        nama_kapal_nelayan: r.nama_kapal_nelayan,
-        jumlah_gabus: r.jumlah_gabus,
-        nelayan_id: r.nelayan_id || null,
-      }));
-      await supabase.from("trip_manifests").insert(rows);
+      if (manifestRows.length > 0) {
+        const rows = manifestRows.map((r) => ({
+          trip_id: editingTrip.id,
+          nama_kapal_nelayan: r.nama_kapal_nelayan,
+          jumlah_gabus: r.jumlah_gabus,
+          nelayan_id: r.nelayan_id || null,
+        }));
+        await supabase.from("trip_manifests").insert(rows);
+      }
     } else {
       const { data: newTrip } = await supabase
         .from("trips")
@@ -153,7 +155,7 @@ export default function PengangkutDashboard() {
         .select()
         .single();
 
-      if (newTrip) {
+      if (newTrip && manifestRows.length > 0) {
         const rows = manifestRows.map((r) => ({
           trip_id: newTrip.id,
           nama_kapal_nelayan: r.nama_kapal_nelayan,
@@ -225,25 +227,19 @@ export default function PengangkutDashboard() {
       {/* Transporter Header Banner */}
       <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-md border border-slate-200 flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
         <div className="flex items-center gap-4">
-          <div className="w-14 h-14 rounded-2xl bg-[#0A2E4D] text-white flex items-center justify-center shadow-lg">
-            <Ship className="w-8 h-8 text-sky-400" />
-          </div>
           <div>
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-bold px-2.5 py-0.5 rounded-full bg-sky-50 text-sky-700 uppercase">
-                Kapal Pengangkut
-              </span>
-              <span className="text-xs text-slate-500">
-                Pangkalan: Area {currentUser.lokasi_default || "Puma"}
-              </span>
-            </div>
             <h1 className="text-xl sm:text-2xl font-black text-slate-900 uppercase mt-0.5">
               {currentUser.nama_kapal}
             </h1>
             <p className="text-xs sm:text-sm text-slate-600 font-medium">
-              👨‍✈️ Juragan: {currentUser.nama_juragan || "Juragan Kapal"} • WA:{" "}
+              Juragan: {currentUser.nama_juragan || "Juragan Kapal"} • WA:{" "}
               {currentUser.no_whatsapp}
             </p>
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-slate-500">
+                Pangkalan: Area {currentUser.lokasi_default || "Puma"}
+              </span>
+            </div>
           </div>
         </div>
 
@@ -458,6 +454,7 @@ export default function PengangkutDashboard() {
         initialTrip={editingTrip}
         registeredNelayan={registeredNelayan}
         currentTransporter={currentUser}
+        isTransporterRole={true}
       />
 
       {/* Chat Drawer */}
