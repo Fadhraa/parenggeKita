@@ -7,6 +7,7 @@ import { supabase } from "@/lib/supabaseClient";
 import { MOCK_TRIPS } from "@/lib/mockData";
 import { getSessionUser } from "@/lib/session";
 import ManifestCard from "@/components/ManifestCard";
+import LoginGuideModal from "@/components/LoginGuideModal";
 import { Package, Navigation, Sparkles, Anchor } from "lucide-react";
 
 // Dynamically import LiveTrackingMap to avoid SSR issues with Leaflet
@@ -29,6 +30,7 @@ export default function HomePage() {
     "Semua",
   );
   const [isLoading, setIsLoading] = useState(true);
+  const [isGuideOpen, setIsGuideOpen] = useState(true);
 
   // Fetch trips from Supabase (with fallback)
   const fetchTrips = async (showLoading = false) => {
@@ -257,10 +259,25 @@ export default function HomePage() {
 
       {/* Footer Landing Page */}
       <footer className="w-full border-t border-slate-200 bg-white py-6 text-center">
-        <p className="text-xs sm:text-sm font-medium text-slate-500">
-          &copy; {new Date().getFullYear()} Parengge Kita
-        </p>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+          <p className="font-medium">
+            &copy; {new Date().getFullYear()} Parengge Kita — Transparansi Logistik & Pelayaran Nelayan
+          </p>
+          <button
+            type="button"
+            onClick={() => setIsGuideOpen(true)}
+            className="hover:text-sky-600 font-semibold underline underline-offset-2 transition-colors"
+          >
+            Panduan Akses Login
+          </button>
+        </div>
       </footer>
+
+      {/* Modal Panduan Login */}
+      <LoginGuideModal
+        isOpen={isGuideOpen}
+        onClose={() => setIsGuideOpen(false)}
+      />
     </div>
   );
 }

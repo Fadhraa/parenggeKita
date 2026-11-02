@@ -3,11 +3,20 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Ship, LogIn, Lock, User as UserIcon, AlertCircle, LogOut } from "lucide-react";
+import {
+  Ship,
+  LogIn,
+  Lock,
+  User as UserIcon,
+  AlertCircle,
+  LogOut,
+  KeyRound,
+} from "lucide-react";
 import { supabase } from "@/lib/supabaseClient";
 import { MOCK_USERS } from "@/lib/mockData";
 import { setSessionUser } from "@/lib/session";
 import { User } from "@/types";
+import DemoAccountsModal from "@/components/DemoAccountsModal";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -15,6 +24,7 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [isDemoModalOpen, setIsDemoModalOpen] = useState(true);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -75,13 +85,25 @@ export default function LoginPage() {
   return (
     <div className="relative min-h-[100vh] flex items-center justify-center p-4 py-16 sm:py-12">
       {/* Tombol Kembali ke Landing Page */}
-      <Link
-        href="/"
-        className="absolute top-4 left-4 sm:top-6 sm:left-6 z-10 inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/90 backdrop-blur-sm border border-slate-200/80 hover:border-coral-300 shadow-sm text-coral hover:text-coral-hover hover:bg-coral-50/60 font-bold text-xs sm:text-sm transition-all hover:-translate-x-0.5 group"
-      >
-        <LogOut className="w-4 h-4 text-coral group-hover:scale-105 transition-transform" />
-        <span>Kembali</span>
-      </Link>
+      <div className="absolute top-4 left-4 right-4 sm:top-6 sm:left-6 sm:right-6 z-10 flex items-center justify-between">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-white/90 backdrop-blur-sm border border-slate-200/80 hover:border-coral-300 shadow-sm text-coral hover:text-coral-hover hover:bg-coral-50/60 font-bold text-xs sm:text-sm transition-all hover:-translate-x-0.5 group"
+        >
+          <LogOut className="w-4 h-4 text-coral group-hover:scale-105 transition-transform" />
+          <span>Kembali</span>
+        </Link>
+
+        {/* Tombol Akun Demo */}
+        <button
+          type="button"
+          onClick={() => setIsDemoModalOpen(true)}
+          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-xl bg-sky-50 hover:bg-sky-100 text-sky-700 border border-sky-200 shadow-sm font-bold text-xs sm:text-sm transition-all hover:scale-102"
+        >
+          <KeyRound className="w-4 h-4 text-sky-600" />
+          <span>Akun Demo</span>
+        </button>
+      </div>
 
       <div className="w-full max-w-md bg-white rounded-3xl shadow-xl border border-slate-200 p-6 sm:p-8 space-y-6">
         {/* Header */}
@@ -153,7 +175,7 @@ export default function LoginPage() {
         </form>
 
         {/* Footer */}
-        <div className="pt-4 border-t border-slate-200 text-center">
+        <div className="pt-4 border-t border-slate-200 text-center space-y-2">
           <p className="text-xs text-slate-600">
             Belum memiliki akun kapal?{" "}
             <Link
@@ -163,8 +185,29 @@ export default function LoginPage() {
               Daftar Kapal Baru
             </Link>
           </p>
+
+          <p className="text-[11px] text-slate-500">
+            Ingin mencoba fitur?{" "}
+            <button
+              type="button"
+              onClick={() => setIsDemoModalOpen(true)}
+              className="text-sky-600 font-bold hover:underline"
+            >
+              Lihat Akun Demo
+            </button>
+          </p>
         </div>
       </div>
+
+      {/* Modal Akun Demo */}
+      <DemoAccountsModal
+        isOpen={isDemoModalOpen}
+        onClose={() => setIsDemoModalOpen(false)}
+        onSelectAccount={(user, pass) => {
+          setUsername(user);
+          setPassword(pass);
+        }}
+      />
     </div>
   );
 }
